@@ -1,0 +1,15 @@
+{
+  "name": "@axios-use/vue",
+  "version": "0.1.0",
+  "description": "A Vue composition utilities for Axios.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "wangcch <wangcch.cc@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "axios": "^0.27.2",
+    "vue": "^3.2.37"
+  }
+}
