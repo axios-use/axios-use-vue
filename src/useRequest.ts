@@ -33,7 +33,7 @@ export type UseRequestResult<T extends Request> = [
   },
 ];
 
-export default function useRequest<T extends Request>(
+export function useRequest<T extends Request>(
   fn: T,
   options?: UseRequestOptions<T>,
 ): UseRequestResult<T> {
