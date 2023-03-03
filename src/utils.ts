@@ -1,4 +1,5 @@
-import { readonly, ref } from "vue";
+import type { Ref } from "vue";
+import { readonly, ref, unref } from "vue";
 
 type Reducer<S, A> = (prevState: S, action: A) => S;
 type ReducerState<R extends Reducer<any, any>> = R extends Reducer<infer S, any>
@@ -26,4 +27,21 @@ export function useReducer<R extends Reducer<any, any>>(
   };
 
   return [readonly(state), dispatch] as const;
+}
+
+export type UnRef<T> = T extends Ref<infer U> ? U : T;
+export type FullRefArrayItem<T extends any[]> = { [K in keyof T]: Ref<T[K]> };
+export type UnRefArrayItem<T extends any[]> = { [K in keyof T]: UnRef<T[K]> };
+
+/**
+ * `unref` for ref group
+ * @param arr
+ */
+export function unrefs<T extends any[]>(
+  arr: FullRefArrayItem<T> | never[],
+): UnRefArrayItem<T> {
+  if (arr && Array.isArray(arr)) {
+    return arr.map((a) => unref(a)) as UnRefArrayItem<T>;
+  }
+  return [] as UnRefArrayItem<T>;
 }
