@@ -9,7 +9,8 @@
     "build:es": "tsc -m ESNext --outDir ./esm",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore",
     "lint:fix": "yarn lint --fix",
-    "format": "prettier --write '**/*' --config ./.prettierrc"
+    "format": "prettier --write '**/*' --config ./.prettierrc",
+    "prepare": "yarn build"
   },
   "author": "wangcch <wangcch.cc@gmail.com>",
   "license": "MIT",
