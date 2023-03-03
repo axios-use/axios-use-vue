@@ -19,5 +19,6 @@ jest.json
 
 .travis.yml
 .prettier*
-.eslintrc.json
+.eslintrc.*
 .eslintignore
+.npmrc
