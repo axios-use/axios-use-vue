@@ -43,5 +43,5 @@ export function unrefs<T extends any[]>(
   if (arr && Array.isArray(arr)) {
     return arr.map((a) => unref(a)) as UnRefArrayItem<T>;
   }
-  return [] as UnRefArrayItem<T>;
+  return [] as unknown as UnRefArrayItem<T>;
 }
