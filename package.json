@@ -16,6 +16,20 @@
   },
   "author": "wangcch <wangcch.cc@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/axios-use/axios-use-vue.git"
+  },
+  "keywords": [
+    "axios",
+    "hooks",
+    "vue",
+    "request",
+    "useAxios",
+    "useRequest",
+    "useResource",
+    "Composition"
+  ],
   "peerDependencies": {
     "axios": ">=0.21.4"
   },
