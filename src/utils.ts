@@ -1,4 +1,4 @@
-import type { Ref } from "vue";
+import type { ComputedRef, Ref } from "vue";
 import { readonly, ref, unref } from "vue";
 
 type Reducer<S, A> = (prevState: S, action: A) => S;
@@ -38,7 +38,7 @@ export type UnRefArrayItem<T extends any[]> = { [K in keyof T]: UnRef<T[K]> };
  * @param arr
  */
 export function unrefs<T extends any[]>(
-  arr: FullRefArrayItem<T> | never[],
+  arr: FullRefArrayItem<T> | ComputedRef<T> | never[],
 ): UnRefArrayItem<T> {
   if (arr && Array.isArray(arr)) {
     return arr.map((a) => unref(a)) as UnRefArrayItem<T>;

@@ -1,4 +1,4 @@
-import type { Ref } from "vue";
+import type { ComputedRef, Ref } from "vue";
 import { watch, computed } from "vue";
 import type { AxiosResponse, Canceler } from "axios";
 
@@ -80,7 +80,10 @@ function getNextState<T extends Request>(
 
 export function useResource<T extends Request>(
   fn: T,
-  requestParams?: FullRefArrayItem<Parameters<T>> | false,
+  requestParams?:
+    | FullRefArrayItem<Parameters<T>>
+    | ComputedRef<Parameters<T>>
+    | false,
   options?: UseResourceOptions<T>,
 ): UseResourceResult<T> {
   const [createRequest, { clear }] = useRequest(fn, {
