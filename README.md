@@ -42,11 +42,11 @@ const [{ data, error, isLoading }] = useResource((id) => ({ url: `/user/${id}` }
 import { useRequest, useResource } from "@axios-use/vue";
 ```
 
-### Options
+### Options (optional)
 
-| config   | type   | explain        |
-| -------- | ------ | -------------- |
-| instance | object | axios instance |
+| config   | type   | default | explain        |
+| -------- | ------ | ------- | -------------- |
+| instance | object | `axios` | axios instance |
 
 ```ts
 import axios from "axios";
@@ -205,6 +205,16 @@ const [reqState, request] = useResource(
 );
 
 request("12345"); // custom request is still useful
+
+// ComputedRef parameter
+const params = computed(() => ({ id: unref(userId) }));
+const [reqState, request] = useResource(
+  ({ id }) => ({
+    url: `/user/${id}`,
+    method: "GET",
+  }),
+  [params],
+);
 
 // options: onCompleted, onError
 const [reqState] = useResource(
