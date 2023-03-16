@@ -16,10 +16,8 @@ export const setUseRequestConfig = (app: App, options?: RequestConfigType) => {
 
 export const getUseRequestConfig = (): RequestConfigType &
   Required<Pick<RequestConfigType, "instance">> => {
-  const { instance = axios } = inject<RequestConfigType>(
-    AXIOS_USE_VUE_PROVIDE_KEY,
-    {},
-  );
+  const { instance = axios } =
+    inject<RequestConfigType>(AXIOS_USE_VUE_PROVIDE_KEY, {}) || {};
 
   return { instance };
 };
