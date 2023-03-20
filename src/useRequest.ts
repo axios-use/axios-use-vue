@@ -28,7 +28,9 @@ export type UseRequestOptions<T extends Request> = RequestCallbackFn<T> & {
 export type UseRequestResult<T extends Request> = [
   RequestFactory<T>,
   {
+    /** Whether there are pending requests in the current `useRequest` */
     hasPending: ComputedRef<boolean>;
+    /** Cancel all requests for the current `useRequest` */
     clear: Canceler;
   },
 ];
@@ -65,6 +67,7 @@ export function useRequest<T extends Request>(
 
   const request = (...args: Parameters<T>) => {
     const _config = fn(...args);
+    // for browser compatibility
     const _source = axios.CancelToken.source();
 
     const ready = () => {

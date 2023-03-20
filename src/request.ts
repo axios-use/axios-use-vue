@@ -28,7 +28,9 @@ export interface RequestDispatcher<T extends Request> {
   (...args: Parameters<T>): Canceler;
 }
 
-// Normalize the error response returned from our hooks
+/**
+ * Normalize the error response returned from `@axios-use/vue`
+ */
 export interface RequestError<
   T = any,
   D = any,
@@ -42,13 +44,24 @@ export interface RequestError<
 }
 
 export type RequestCallbackFn<T extends Request> = {
+  /**
+   * A callback function that's called when your request successfully completes with zero errors.
+   * This function is passed the request's result `data` and `response`.
+   */
   onCompleted?: (
     data?: Payload<T>,
     response?: AxiosResponse<BodyData<T>>,
   ) => void;
+  /**
+   * A callback function that's called when the request encounters one or more errors.
+   * This function is passed an `RequestError` object that contains either a networkError object or a `AxiosError`, depending on the error(s) that occurred.
+   */
   onError?: (err?: RequestError<Payload<T>, BodyData<T>>) => void;
 };
 
+/**
+ * For TypeScript type deduction
+ */
 export function request<T, D = any>(
   config: AxiosRequestConfig<D>,
 ): Resource<T, D> {

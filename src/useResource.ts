@@ -30,9 +30,13 @@ export type UseResourceResultState<T extends Request> = Readonly<
 >;
 
 export type UseResourceResult<T extends Request> = [
+  /** Response data group */
   UseResourceResultState<T>,
+  /** A function that enables you to re-execute the request. And pass in new variables */
   RequestDispatcher<T>,
+  /** A function that enables you to re-execute the request. Keep the latest variables */
   () => Canceler | undefined,
+  /** A function that cancel the request */
   Canceler,
 ];
 

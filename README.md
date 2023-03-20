@@ -44,9 +44,9 @@ import { useRequest, useResource } from "@axios-use/vue";
 
 ### Options (optional)
 
-| config   | type   | default | explain        |
-| -------- | ------ | ------- | -------------- |
-| instance | object | `axios` | axios instance |
+| config   | type   | default | explain                                                       |
+| -------- | ------ | ------- | ------------------------------------------------------------- |
+| instance | object | `axios` | Axios instance. You can pass your axios with a custom config. |
 
 ```ts
 import axios from "axios";

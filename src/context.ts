@@ -7,6 +7,7 @@ import axios from "axios";
 export const AXIOS_USE_VUE_PROVIDE_KEY = "__axios_use_vue_config";
 
 export type RequestConfigType = {
+  /** Axios instance. You can pass your axios with a custom config. */
   instance?: AxiosInstance;
 };
 
