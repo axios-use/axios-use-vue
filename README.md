@@ -149,20 +149,18 @@ const [reqState, fetch, refresh] = useResource((id: string) =>
 ```
 
 ```ts
-type ReqState = Readonly<
-  Ref<{
-    // Result
-    data?: Payload<T>;
-    // axios response
-    response?: AxiosResponse;
-    // normalized error
-    error?: RequestError<Payload<TRequest>>;
-    isLoading: boolean;
-  }>
->;
+type ReqState = ComputedRef<{
+  // Result
+  data?: Payload<T>;
+  // axios response
+  response?: AxiosResponse;
+  // normalized error
+  error?: RequestError;
+  isLoading: boolean;
+}>;
 
 // `options.filter` will not be called
-type Fetch = (...args: Parameters<TRequest>) => Canceler;
+type Fetch = (...args: Parameters<T>) => Canceler;
 
 // 1. Same as `fetch`. But no parameters required. Inherit `useResource` parameters
 // 2. Will call `options.filter`

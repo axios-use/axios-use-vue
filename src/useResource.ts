@@ -1,5 +1,5 @@
-import type { ComputedRef, Ref } from "vue";
-import { watch, computed } from "vue";
+import type { ComputedRef } from "vue";
+import { computed, unref, watch } from "vue";
 import type { AxiosResponse, Canceler } from "axios";
 
 import type { RequestConfigType } from "./context";
@@ -25,8 +25,8 @@ export type RequestState<T extends Request> = {
   isLoading?: boolean;
 };
 
-export type UseResourceResultState<T extends Request> = Readonly<
-  Ref<RequestState<T>>
+export type UseResourceResultState<T extends Request> = ComputedRef<
+  RequestState<T>
 >;
 
 export type UseResourceResult<T extends Request> = [
@@ -158,5 +158,7 @@ export function useResource<T extends Request>(
     },
   );
 
-  return [state as UseResourceResultState<T>, request, refresh, cancel];
+  const _rtnState = computed<RequestState<T>>(() => unref(state));
+
+  return [_rtnState, request, refresh, cancel];
 }
