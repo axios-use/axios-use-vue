@@ -22,3 +22,5 @@ jest.json
 .eslintrc.*
 .eslintignore
 .npmrc
+package-lock.json
+yarn.lock
