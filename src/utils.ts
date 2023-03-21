@@ -20,13 +20,13 @@ type ReducerAction<R extends Reducer<any, any>> = R extends Reducer<
 export function useReducer<R extends Reducer<any, any>>(
   reducer: R,
   initialArg: ReducerState<R>,
-) {
+): [Readonly<Ref<ReducerState<R>>>, (action: ReducerAction<R>) => void] {
   const state = ref(initialArg);
   const dispatch = (action: ReducerAction<R>) => {
     state.value = reducer(state.value, action);
   };
 
-  return [readonly(state), dispatch] as const;
+  return [readonly(state) as Readonly<Ref<ReducerState<R>>>, dispatch];
 }
 
 export type UnRef<T> = T extends Ref<infer U> ? U : T;
