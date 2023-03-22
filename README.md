@@ -29,13 +29,21 @@ A Vue composition utilities for Axios. Lightweight, cancelable and less change.
 
 ### Quick Start
 
-```js
+```vue
+<script setup>
 import { defineProps, toRef } from "vue";
 import { useResource } from "@axios-use/vue";
 
 const props = defineProps(["userId"]);
 const userId = toRef(props, "userId");
-const [{ data, error, isLoading }] = useResource((id) => ({ url: `/user/${id}` }), [userId]);
+const [reqState] = useResource((id) => ({ url: `/user/${id}` }), [userId]);
+</script>
+
+<template>
+  <div v-if="reqState.error">{{ reqState.error?.message || "error" }}</div>
+  <div v-else-if="reqState.isLoading === false">{{ reqState.data?.name }}</div>
+  <div v-else>...</div>
+</template>
 ```
 
 ```js
@@ -133,7 +141,7 @@ const [createRequest, { hasPending, cancel }] = useRequest(
 
 ```ts
 // js
-const [{ data, error, isLoading }, fetch, refresh, cancel] = useResource((id) => ({
+const [reqState, fetch, refresh, cancel] = useResource((id) => ({
   url: `/user/${id}`,
   method: "GET",
 }));
