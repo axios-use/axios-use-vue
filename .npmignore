@@ -16,6 +16,7 @@ yarn-error.log*
 tsconfig.json
 tsconfig.*.json
 jest.json
+vitest.config.ts
 
 .travis.yml
 .prettier*
