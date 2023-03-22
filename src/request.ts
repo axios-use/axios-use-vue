@@ -49,14 +49,14 @@ export type RequestCallbackFn<T extends Request> = {
    * This function is passed the request's result `data` and `response`.
    */
   onCompleted?: (
-    data?: Payload<T>,
-    response?: AxiosResponse<BodyData<T>>,
+    data: Payload<T>,
+    response: AxiosResponse<BodyData<T>>,
   ) => void;
   /**
    * A callback function that's called when the request encounters one or more errors.
    * This function is passed an `RequestError` object that contains either a networkError object or a `AxiosError`, depending on the error(s) that occurred.
    */
-  onError?: (err?: RequestError<Payload<T>, BodyData<T>>) => void;
+  onError?: (err: RequestError<Payload<T>, BodyData<T>>) => void;
 };
 
 /**
