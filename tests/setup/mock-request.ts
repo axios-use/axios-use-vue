@@ -9,9 +9,24 @@ export const mockAxiosIns = axios.create({
   baseURL: BASE_URL,
 });
 
+export const mockAxiosInsForPkg = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    "h-mock-xxx": "",
+  },
+});
+
 export type MockDataUserItem = {
   id: string;
   name: string;
+};
+
+export const pkgData = <T>(data: T, code: number, msg = "") => {
+  return {
+    data,
+    code,
+    msg,
+  };
 };
 
 export const MOCK_DATA_USER_LIST: MockDataUserItem[] = [
@@ -63,7 +78,11 @@ export const restHandlers = [
       return res(ctx.status(404), ctx.json({ msg: "not found" }));
     }
 
-    if (req.headers.has("")) return res(ctx.status(200), ctx.json(_item));
+    if (req.headers.has("h-mock-xxx")) {
+      return res(ctx.status(200), ctx.json(pkgData(_item, 0, "success")));
+    }
+
+    return res(ctx.status(200), ctx.json(_item));
   }),
 ];
 

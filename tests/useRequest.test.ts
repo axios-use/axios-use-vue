@@ -1,10 +1,12 @@
 import { describe, expect, test, vi } from "vitest";
 import { defineComponent, h } from "vue";
 
-import { useRequest } from "../src";
+import AxiosUseVue, { useRequest } from "../src";
 import {
   getAPIFuncs,
   mockAxiosIns,
+  mockAxiosInsForPkg,
+  pkgData,
   MOCK_DATA_USER_LIST,
 } from "./setup/mock-request";
 import { mount } from "./setup/mount";
@@ -23,18 +25,47 @@ describe("useRequest", () => {
     expect(response.status).toBe(200);
   });
 
+  test("plugin: custom instance", async () => {
+    const Component = defineComponent({
+      setup() {
+        const [createRequest] = useRequest(getAPIFuncs().user.list);
+
+        createRequest()
+          .ready()
+          .then(([data, response]) => {
+            expect(data).toStrictEqual(MOCK_DATA_USER_LIST);
+            expect(response.data).toStrictEqual(MOCK_DATA_USER_LIST);
+            expect(response.status).toBe(200);
+          });
+
+        return () => h("div");
+      },
+    });
+
+    mount(Component, (app) => {
+      app.use(AxiosUseVue, { instance: mockAxiosIns });
+    });
+  });
+
   test("inline instance", async () => {
-    const [createRequest] = useRequest(getAPIFuncs().user.list, {
-      instance: mockAxiosIns,
+    const TARGET_ID = "1";
+    const mockItem = pkgData(
+      MOCK_DATA_USER_LIST.find((i) => i.id === TARGET_ID),
+      0,
+      "success",
+    );
+
+    const [createRequest] = useRequest(getAPIFuncs().user.get, {
+      instance: mockAxiosInsForPkg,
       onCompleted: (d, r) => {
-        expect(d).toStrictEqual(MOCK_DATA_USER_LIST);
-        expect(r.data).toStrictEqual(MOCK_DATA_USER_LIST);
+        expect(d).toStrictEqual(mockItem);
+        expect(r.data).toStrictEqual(mockItem);
         expect(r.status).toBe(200);
       },
     });
-    const [data, response] = await createRequest().ready();
-    expect(data).toStrictEqual(MOCK_DATA_USER_LIST);
-    expect(response.data).toStrictEqual(MOCK_DATA_USER_LIST);
+    const [data, response] = await createRequest({ id: TARGET_ID }).ready();
+    expect(data).toStrictEqual(mockItem);
+    expect(response.data).toStrictEqual(mockItem);
     expect(response.status).toBe(200);
   });
 
