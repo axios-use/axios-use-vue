@@ -1,5 +1,5 @@
 import type { ComputedRef, Ref } from "vue";
-import { readonly, ref, unref } from "vue";
+import { isReactive, readonly, ref, unref } from "vue";
 
 type Reducer<S, A> = (prevState: S, action: A) => S;
 type ReducerState<R extends Reducer<any, any>> = R extends Reducer<infer S, any>
@@ -44,4 +44,14 @@ export function unrefs<T extends any[]>(
     return arr.map((a) => unref(a)) as UnRefArrayItem<T>;
   }
   return [] as unknown as UnRefArrayItem<T>;
+}
+
+/**
+ * check whether `reactive` value exists
+ */
+export function hasReactive<T>(args: T) {
+  if (args && Array.isArray(args)) {
+    return args.some(isReactive);
+  }
+  return false;
 }

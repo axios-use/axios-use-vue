@@ -1,7 +1,7 @@
 import { describe, test, expect } from "vitest";
-import { isRef, ref, unref } from "vue";
+import { isRef, ref, reactive, unref } from "vue";
 
-import { unrefs, useReducer } from "../src/utils";
+import { unrefs, useReducer, hasReactive } from "../src/utils";
 
 describe("unrefs", () => {
   test("should be defined", () => {
@@ -69,5 +69,25 @@ describe("useReducer", () => {
       // ignore
     }
     expect(state.value.num).toBe(2);
+  });
+});
+
+describe("hasReactive", () => {
+  test("should be defined", () => {
+    expect(hasReactive).toBeDefined();
+  });
+
+  test("check", () => {
+    expect(hasReactive(null)).toBeFalsy();
+    expect(hasReactive(undefined)).toBeFalsy();
+    expect(hasReactive({})).toBeFalsy();
+    expect(hasReactive({ 0: 1, 1: 2 })).toBeFalsy();
+    expect(hasReactive([])).toBeFalsy();
+    expect(hasReactive([1, 2, 3])).toBeFalsy();
+    expect(hasReactive([ref(1), 2, 3])).toBeFalsy();
+    expect(hasReactive([ref(1), ref(2), 3])).toBeFalsy();
+    expect(hasReactive([ref(1), ref(2), { a: 1 }])).toBeFalsy();
+    expect(hasReactive([reactive({ a: 1 })])).toBeTruthy();
+    expect(hasReactive([1, 2, reactive({ a: 1 })])).toBeTruthy();
   });
 });
