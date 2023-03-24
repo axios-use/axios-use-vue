@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
-import { computed, defineComponent, h, ref, unref } from "vue";
+import { computed, defineComponent, h, ref, unref, reactive } from "vue";
 
 import { useResource } from "../src";
 import { getAPIFuncs, MOCK_DATA_USER_LIST } from "./setup/mock-request";
@@ -145,7 +145,7 @@ describe("useResource", () => {
     expect(wrapper.get('[data-t-id="res.isLoading"]').text()).toBe("false");
   });
 
-  test("options: ", async () => {
+  test("options: defaultState", async () => {
     const Component = defineComponent({
       setup() {
         const [res, request] = useResource(getAPIFuncs(true).user.get, [], {
@@ -181,5 +181,56 @@ describe("useResource", () => {
       JSON.stringify(MOCK_DATA_USER_LIST.find((i) => i.id === "1")),
     );
     expect(wrapper.get('[data-t-id="res.isLoading"]').text()).toBe("false");
+  });
+
+  test("reactive parameter", async () => {
+    const Component = defineComponent({
+      setup() {
+        const params = reactive({ id: "1" });
+        const [res] = useResource(getAPIFuncs(true).user.get, [params], {
+          filter: (p) => Boolean(p?.id),
+        });
+
+        expect(unref(res).isLoading).toBeTruthy();
+        expect(unref(res).data).toBeUndefined();
+        expect(unref(res).response).toBeUndefined();
+        expect(unref(res).error).toBeUndefined();
+
+        const handleChangeId = () => {
+          params.id = "2";
+        };
+
+        return () =>
+          h("div", [
+            h("button", {
+              "data-t-id": "change_id",
+              onClick: handleChangeId,
+            }),
+            h(
+              "div",
+              { "data-t-id": "res.data" },
+              JSON.stringify(res.value.data),
+            ),
+            h("div", { "data-t-id": "res.isLoading" }, res.value.isLoading),
+            h("div", { "data-t-id": "params.id" }, params.id),
+          ]);
+      },
+    });
+
+    const wrapper = mount(Component);
+    await flushPromises();
+    expect(wrapper.get('[data-t-id="res.data"]').text()).toBe(
+      JSON.stringify(MOCK_DATA_USER_LIST.find((i) => i.id === "1")),
+    );
+    expect(wrapper.get('[data-t-id="res.isLoading"]').text()).toBe("false");
+    expect(wrapper.get('[data-t-id="params.id"]').text()).toBe("1");
+
+    wrapper.get('[data-t-id="change_id"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.get('[data-t-id="res.data"]').text()).toBe(
+      JSON.stringify(MOCK_DATA_USER_LIST.find((i) => i.id === "2")),
+    );
+    expect(wrapper.get('[data-t-id="res.isLoading"]').text()).toBe("false");
+    expect(wrapper.get('[data-t-id="params.id"]').text()).toBe("2");
   });
 });

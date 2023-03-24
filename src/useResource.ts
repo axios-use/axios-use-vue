@@ -13,7 +13,7 @@ import type {
 } from "./request";
 import { useRequest } from "./useRequest";
 import type { FullRefArrayItem } from "./utils";
-import { useReducer, unrefs } from "./utils";
+import { hasReactive, useReducer, unrefs } from "./utils";
 
 const REQUEST_CLEAR_MESSAGE =
   "A new request has been made before completing the last one";
@@ -82,12 +82,14 @@ function getNextState<T extends Request>(
   };
 }
 
+export type RequestDepsParameters<T extends Request> =
+  | Parameters<T>
+  | FullRefArrayItem<Parameters<T>>
+  | ComputedRef<Parameters<T>>;
+
 export function useResource<T extends Request>(
   fn: T,
-  requestParams?:
-    | FullRefArrayItem<Parameters<T>>
-    | ComputedRef<Parameters<T>>
-    | false,
+  requestParams?: RequestDepsParameters<T> | false,
   options?: UseResourceOptions<T>,
 ): UseResourceResult<T> {
   const [createRequest, { clear }] = useRequest(fn, {
@@ -155,6 +157,7 @@ export function useResource<T extends Request>(
     },
     {
       immediate: true,
+      deep: hasReactive(requestParams),
     },
   );
 

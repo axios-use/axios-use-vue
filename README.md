@@ -222,6 +222,16 @@ const [reqState, request] = useResource(
   [params],
 );
 
+// reactive parameter
+const params = reactive({ id: userId });
+const [reqState, request] = useResource(
+  ({ id }) => ({
+    url: `/user/${id}`,
+    method: "GET",
+  }),
+  [params],
+);
+
 // options: onCompleted, onError
 const [reqState] = useResource(
   () => ({
