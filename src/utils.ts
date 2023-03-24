@@ -38,7 +38,7 @@ export type UnRefArrayItem<T extends any[]> = { [K in keyof T]: UnRef<T[K]> };
  * @param arr
  */
 export function unrefs<T extends any[]>(
-  arr: FullRefArrayItem<T> | ComputedRef<T> | never[],
+  arr: FullRefArrayItem<T> | ComputedRef<T> | unknown[],
 ): UnRefArrayItem<T> {
   if (arr && Array.isArray(arr)) {
     return arr.map((a) => unref(a)) as UnRefArrayItem<T>;
