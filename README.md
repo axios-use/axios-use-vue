@@ -29,6 +29,8 @@ A Vue composition utilities for Axios. Lightweight, cancelable and less change.
 
 ### Quick Start
 
+[![](https://img.shields.io/badge/StackBlitz-Preview-%231389fd?style=for-the-badge&logo=StackBlitz)](https://stackblitz.com/edit/vitejs-vite-zzarol?file=src/components/UserList.vue)
+
 ```vue
 <script setup>
 import { defineProps, toRef } from "vue";
