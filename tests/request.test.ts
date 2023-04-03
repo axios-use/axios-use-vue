@@ -56,5 +56,9 @@ describe("createRequestError", () => {
     expect(createRequestError(undefined as any).code).toBeUndefined();
     expect(createRequestError(undefined as any).data).toBeUndefined();
     expect(createRequestError(undefined as any).original).toBeUndefined();
+
+    expect(createRequestError({} as any).code).toBeUndefined();
+    expect(createRequestError({} as any).data).toBeUndefined();
+    expect(createRequestError({} as any).original).toStrictEqual({});
   });
 });
