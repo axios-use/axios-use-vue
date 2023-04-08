@@ -1,10 +1,9 @@
-import type { App } from "vue";
+import type { App, InjectionKey } from "vue";
 import { getCurrentInstance, inject } from "vue";
 
 import type { AxiosInstance } from "axios";
 import axios from "axios";
 
-export const AXIOS_USE_VUE_PROVIDE_KEY = "__axios_use_vue_config";
 const INJECT_INSIDE_WARN_MSG =
   "[@axios-use/vue warn]: getUseRequestConfig() can only be used inside setup() or functional components.";
 
@@ -12,6 +11,10 @@ export type RequestConfigType = {
   /** Axios instance. You can pass your axios with a custom config. */
   instance?: AxiosInstance;
 };
+
+export const AXIOS_USE_VUE_PROVIDE_KEY = Symbol(
+  "axios_use_vue_config",
+) as InjectionKey<RequestConfigType>;
 
 export const setUseRequestConfig = (app: App, options?: RequestConfigType) => {
   const _version = Number(app.version.split(".")[0]);
@@ -26,7 +29,7 @@ export const setUseRequestConfig = (app: App, options?: RequestConfigType) => {
             set: (v) => Object.assign(_cache, v),
           });
         }
-        this._provided[AXIOS_USE_VUE_PROVIDE_KEY] = options;
+        this._provided[AXIOS_USE_VUE_PROVIDE_KEY as any] = options;
       },
     });
   } else {
