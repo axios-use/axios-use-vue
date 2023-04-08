@@ -14,7 +14,24 @@ export type RequestConfigType = {
 };
 
 export const setUseRequestConfig = (app: App, options?: RequestConfigType) => {
-  app.provide(AXIOS_USE_VUE_PROVIDE_KEY, options);
+  const _version = Number(app.version.split(".")[0]);
+  // for vue2
+  if (_version === 2) {
+    app.mixin({
+      beforeCreate() {
+        if (!this._provided) {
+          const _cache = {};
+          Object.defineProperty(this, "_provided", {
+            get: () => _cache,
+            set: (v) => Object.assign(_cache, v),
+          });
+        }
+        this._provided[AXIOS_USE_VUE_PROVIDE_KEY] = options;
+      },
+    });
+  } else {
+    app.provide(AXIOS_USE_VUE_PROVIDE_KEY, options);
+  }
 };
 
 export const getUseRequestConfig = (): RequestConfigType &
