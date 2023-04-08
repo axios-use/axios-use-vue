@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",
-    "@vitest/coverage-c8": "^0.29.2",
+    "@vitest/coverage-c8": "^0.29.8",
     "@vue/compiler-dom": "^3.2.47",
     "@vue/eslint-config-prettier": "^7.1.0",
     "@vue/eslint-config-typescript": "^11.0.2",
@@ -51,7 +51,8 @@
     "msw": "^1.1.0",
     "prettier": "^2.8.4",
     "typescript": "^4.9.5",
-    "vitest": "^0.29.2",
-    "vue": "^3.2.47"
+    "vitest": "^0.29.8",
+    "vue": "^3.2.47",
+    "vue2": "npm:vue@2.7.14"
   }
 }
