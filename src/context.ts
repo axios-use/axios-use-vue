@@ -1,8 +1,10 @@
-import type { App, InjectionKey } from "vue";
+import type { InjectionKey } from "vue";
 import { getCurrentInstance, inject } from "vue";
 
 import type { AxiosInstance } from "axios";
 import axios from "axios";
+
+import type { App } from "../demi";
 
 const INJECT_INSIDE_WARN_MSG =
   "[@axios-use/vue warn]: getUseRequestConfig() can only be used inside setup() or functional components.";

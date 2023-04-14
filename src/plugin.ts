@@ -1,4 +1,4 @@
-import type { Plugin } from "vue";
+import type { Plugin } from "../demi";
 
 import type { RequestConfigType } from "./context";
 import { setUseRequestConfig } from "./context";

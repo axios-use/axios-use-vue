@@ -14,6 +14,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore",
     "lint:fix": "yarn lint --fix",
     "format": "prettier --write '**/*' --config ./.prettierrc",
+    "postinstall": "node ./demi/postinstall.js",
     "prepare": "yarn build"
   },
   "author": "wangcch <wangcch.cc@gmail.com>",
