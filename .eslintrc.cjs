@@ -11,6 +11,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: "latest",
   },
+  ignorePatterns: ["demi/*.d.ts"],
   rules: {
     "@typescript-eslint/no-explicit-any": "off",
   },
