@@ -1,8 +1,10 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, expectTypeOf } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
+import type { AxiosResponse, AxiosRequestConfig } from "axios";
 import { computed, defineComponent, h, ref, unref, reactive } from "vue";
 
-import { useResource } from "../src";
+import { useResource, request } from "../src";
+import type { MockDataUserItem } from "./setup/mock-request";
 import { getAPIFuncs, MOCK_DATA_USER_LIST } from "./setup/mock-request";
 
 describe("useResource", () => {
@@ -17,10 +19,18 @@ describe("useResource", () => {
         const params = computed(() => ({ id: unref(id) }));
         const [res] = useResource(getAPIFuncs(true).user.get, [params]);
 
-        expect(unref(res).isLoading).toBeTruthy();
-        expect(unref(res).data).toBeUndefined();
-        expect(unref(res).response).toBeUndefined();
-        expect(unref(res).error).toBeUndefined();
+        const _unref_res = unref(res);
+        expect(_unref_res.isLoading).toBeTruthy();
+        expect(_unref_res.data).toBeUndefined();
+        expect(_unref_res.response).toBeUndefined();
+        expect(_unref_res.error).toBeUndefined();
+
+        expectTypeOf(_unref_res.data).toEqualTypeOf<
+          MockDataUserItem | undefined
+        >();
+        expectTypeOf(_unref_res.response).toEqualTypeOf<
+          AxiosResponse<MockDataUserItem> | undefined
+        >();
 
         const onAdd = () => {
           id.value = String(Number(unref(id)) + 1);
@@ -232,5 +242,36 @@ describe("useResource", () => {
     );
     expect(wrapper.get('[data-t-id="res.isLoading"]').text()).toBe("false");
     expect(wrapper.get('[data-t-id="params.id"]').text()).toBe("2");
+  });
+
+  test("types: custom response type", async () => {
+    const customRequest = <T, D = any>(config: AxiosRequestConfig) =>
+      request<T, D, false>(config);
+
+    const Component = defineComponent({
+      setup() {
+        const id = ref("1");
+
+        const [res] = useResource(
+          (i: string) =>
+            customRequest<MockDataUserItem>({
+              method: "get",
+              url: `/user/${i}`,
+            }),
+          [id],
+        );
+
+        const _unref_res = unref(res);
+
+        expectTypeOf(_unref_res.data).toEqualTypeOf<undefined>();
+        expectTypeOf(_unref_res.response).toEqualTypeOf<
+          MockDataUserItem | undefined
+        >();
+
+        return () => h("div");
+      },
+    });
+
+    mount(Component);
   });
 });

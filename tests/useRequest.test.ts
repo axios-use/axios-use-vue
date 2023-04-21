@@ -1,14 +1,16 @@
 import { describe, expect, test, vi, expectTypeOf } from "vitest";
 import { defineComponent, h } from "vue";
-import type { AxiosResponse } from "axios";
+import type { AxiosResponse, AxiosRequestConfig } from "axios";
+import axios from "axios";
 
-import AxiosUseVue, { useRequest } from "../src";
+import AxiosUseVue, { useRequest, request } from "../src";
 import type { MockDataUserItem } from "./setup/mock-request";
 import {
   getAPIFuncs,
   mockAxiosIns,
   mockAxiosInsForPkg,
   pkgData,
+  BASE_URL,
   MOCK_DATA_USER_LIST,
 } from "./setup/mock-request";
 import { mount } from "./setup/mount";
@@ -39,7 +41,7 @@ describe("useRequest", () => {
             expect(response.data).toStrictEqual(MOCK_DATA_USER_LIST);
             expect(response.status).toBe(200);
 
-            expectTypeOf(data).toEqualTypeOf<MockDataUserItem[]>();
+            expectTypeOf(data).toEqualTypeOf<MockDataUserItem[] | undefined>();
             expectTypeOf(response).toEqualTypeOf<
               AxiosResponse<MockDataUserItem[]>
             >();
@@ -151,5 +153,40 @@ describe("useRequest", () => {
 
     const comp = mount(Component);
     comp.unmount();
+  });
+
+  test("custom response type (custom request func)", async () => {
+    const TARGET_ID = "1";
+    const mockItem = MOCK_DATA_USER_LIST.find((i) => i.id === TARGET_ID);
+
+    const _instance = axios.create({
+      baseURL: BASE_URL,
+    });
+    _instance.interceptors.response.use((d) => d.data);
+
+    const customRequest = <T, D = any>(config: AxiosRequestConfig) =>
+      request<T, D, false>(config);
+
+    const [createRequest] = useRequest(
+      (id: string) =>
+        customRequest<MockDataUserItem>({
+          method: "get",
+          url: `/user/${id}`,
+        }),
+      {
+        instance: _instance,
+        onCompleted: (d, r) => {
+          expect(d).toBeUndefined();
+          expectTypeOf(d).toMatchTypeOf<undefined>();
+          expect(r).toStrictEqual(mockItem);
+          expectTypeOf(r).toMatchTypeOf<MockDataUserItem>();
+        },
+      },
+    );
+    const [data, response] = await createRequest(TARGET_ID).ready();
+    expect(data).toBeUndefined();
+    expectTypeOf(data).toMatchTypeOf<undefined>();
+    expect(response).toStrictEqual(mockItem);
+    expectTypeOf(response).toMatchTypeOf<MockDataUserItem>();
   });
 });
