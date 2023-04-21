@@ -3,7 +3,6 @@ import { computed, ref, unref, onUnmounted } from "vue";
 import type {
   AxiosError,
   AxiosInstance,
-  AxiosResponse,
   Canceler,
   CancelToken,
   CancelTokenSource,
@@ -74,7 +73,7 @@ export function useRequest<T extends Request>(
       sources.value = [...unref(sources), _source];
 
       return _axiosIns({ ..._config, cancelToken: _source.token })
-        .then((res: AxiosResponse<Payload<T>, BodyData<T>>) => {
+        .then((res: NonNullable<Payload<T>>) => {
           removeCancelToken(_source.token);
 
           onCompleted?.(res.data, res);

@@ -1,6 +1,6 @@
 import type { ComputedRef } from "vue";
 import { computed, unref, watch } from "vue";
-import type { AxiosResponse, Canceler } from "axios";
+import type { Canceler } from "axios";
 
 import type { RequestConfigType } from "./context";
 import type {
@@ -19,8 +19,8 @@ const REQUEST_CLEAR_MESSAGE =
   "A new request has been made before completing the last one";
 
 export type RequestState<T extends Request> = {
-  data?: Payload<T>;
-  response?: AxiosResponse<BodyData<T>>;
+  data?: Payload<T, true>;
+  response?: Payload<T>;
   error?: RequestError<Payload<T>, BodyData<T>>;
   isLoading?: boolean;
 };
@@ -63,14 +63,14 @@ function getDefaultStateLoading<T extends Request>(
   return undefined;
 }
 
-type Action<T, D = any> =
-  | { type: "success"; data: T; response: AxiosResponse<D> }
-  | { type: "error"; error: RequestError<T, D> }
+type Action<T extends Request> =
+  | { type: "success"; data: Payload<T, true>; response: Payload<T> }
+  | { type: "error"; error: RequestError<Payload<T>, BodyData<T>> }
   | { type: "reset" | "start" };
 
 function getNextState<T extends Request>(
   state: RequestState<T>,
-  action: Action<Payload<T>, BodyData<T>>,
+  action: Action<T>,
 ): RequestState<T> {
   const response = action.type === "success" ? action.response : state.response;
 

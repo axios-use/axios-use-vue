@@ -6,21 +6,30 @@ import type {
 } from "axios";
 import axios from "axios";
 
-export interface Resource<TPayload, D = any> extends AxiosRequestConfig<D> {
-  payload?: TPayload;
+export type _ResponseDataItemType<T> = T extends AxiosResponse<infer D1>
+  ? D1
+  : T extends { data: infer D2 } | { data?: infer D2 }
+  ? D2
+  : undefined;
+
+export interface Resource<T, D = any, W = AxiosResponse>
+  extends AxiosRequestConfig<D> {
+  _payload?: W extends AxiosResponse ? AxiosResponse<T> : T;
 }
 
-export type Request<T = any, D = any> = (...args: any[]) => Resource<T, D>;
+export type Request<T = any, D = any, W = any> = (
+  ...args: any[]
+) => Resource<T, D, W>;
 
-export type Payload<T extends Request> = ReturnType<T>["payload"];
+export type Payload<T extends Request, Check = false> = Check extends true
+  ? _ResponseDataItemType<ReturnType<T>["_payload"]>
+  : ReturnType<T>["_payload"];
 export type BodyData<T extends Request> = ReturnType<T>["data"];
 
 export interface RequestFactory<T extends Request> {
   (...args: Parameters<T>): {
     cancel: Canceler;
-    ready: () => Promise<
-      readonly [Payload<T>, AxiosResponse<Payload<T>, BodyData<T>>]
-    >;
+    ready: () => Promise<readonly [Payload<T, true>, NonNullable<Payload<T>>]>;
   };
 }
 
@@ -49,8 +58,8 @@ export type RequestCallbackFn<T extends Request> = {
    * This function is passed the request's result `data` and `response`.
    */
   onCompleted?: (
-    data: Payload<T>,
-    response: AxiosResponse<Payload<T>, BodyData<T>>,
+    data: Payload<T, true>,
+    response: NonNullable<Payload<T>>,
   ) => void;
   /**
    * A callback function that's called when the request encounters one or more errors.
@@ -62,9 +71,9 @@ export type RequestCallbackFn<T extends Request> = {
 /**
  * For TypeScript type deduction
  */
-export function request<T, D = any>(
+export function request<T, D = any, W = AxiosResponse>(
   config: AxiosRequestConfig<D>,
-): Resource<T, D> {
+): Resource<T, D, W> {
   return config;
 }
 
