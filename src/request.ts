@@ -50,7 +50,7 @@ export type RequestCallbackFn<T extends Request> = {
    */
   onCompleted?: (
     data: Payload<T>,
-    response: AxiosResponse<BodyData<T>>,
+    response: AxiosResponse<Payload<T>, BodyData<T>>,
   ) => void;
   /**
    * A callback function that's called when the request encounters one or more errors.
