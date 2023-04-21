@@ -21,7 +21,17 @@ export type MockDataUserItem = {
   name: string;
 };
 
-export const pkgData = <T>(data: T, code: number, msg = "") => {
+export type CommonResponse<T> = {
+  data?: T;
+  code: number;
+  msg: string;
+};
+
+export const pkgData = <T>(
+  data: T,
+  code: number,
+  msg = "",
+): CommonResponse<T> => {
   return {
     data,
     code,

@@ -1,7 +1,9 @@
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi, expectTypeOf } from "vitest";
 import { defineComponent, h } from "vue";
+import type { AxiosResponse } from "axios";
 
 import AxiosUseVue, { useRequest } from "../src";
+import type { MockDataUserItem } from "./setup/mock-request";
 import {
   getAPIFuncs,
   mockAxiosIns,
@@ -25,7 +27,7 @@ describe("useRequest", () => {
     expect(response.status).toBe(200);
   });
 
-  test("plugin: custom instance", async () => {
+  test("check createRequest", async () => {
     const Component = defineComponent({
       setup() {
         const [createRequest] = useRequest(getAPIFuncs().user.list);
@@ -36,6 +38,12 @@ describe("useRequest", () => {
             expect(data).toStrictEqual(MOCK_DATA_USER_LIST);
             expect(response.data).toStrictEqual(MOCK_DATA_USER_LIST);
             expect(response.status).toBe(200);
+
+            expectTypeOf(data).toEqualTypeOf<MockDataUserItem[]>();
+            expectTypeOf(response).toEqualTypeOf<
+              AxiosResponse<MockDataUserItem[]>
+            >();
+            expectTypeOf(response.data).toEqualTypeOf<MockDataUserItem[]>();
           });
 
         return () => h("div");
