@@ -76,8 +76,8 @@ export function useRequest<T extends Request>(
         .then((res: NonNullable<Payload<T>>) => {
           removeCancelToken(_source.token);
 
-          onCompleted?.(res.data, res);
-          return [res.data, res] as const;
+          onCompleted?.(res?.data, res);
+          return [res?.data, res] as const;
         })
         .catch((err: AxiosError<Payload<T>, BodyData<T>>) => {
           removeCancelToken(_source.token);
