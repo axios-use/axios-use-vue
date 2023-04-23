@@ -76,6 +76,11 @@ app.use(AxiosUseVue, { instance: axiosInstance });
 app.mount("#app");
 ```
 
+```ts
+// Vue.js v2.7
+Vue.use(AxiosUseVue, { instance: axiosInstance });
+```
+
 ### useRequest
 
 | option              | type            | explain                                          |
