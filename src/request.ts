@@ -43,13 +43,15 @@ export type Request<
 
 export type Payload<T extends Request, Check = false> = Check extends true
   ? ReturnType<T>["_payload_item"]
+  : T extends Request<AxiosResponse>
+  ? NonNullable<ReturnType<T>["_payload"]>
   : ReturnType<T>["_payload"];
 export type BodyData<T extends Request> = ReturnType<T>["data"];
 
 export interface RequestFactory<T extends Request> {
   (...args: Parameters<T>): {
     cancel: Canceler;
-    ready: () => Promise<readonly [Payload<T, true>, NonNullable<Payload<T>>]>;
+    ready: () => Promise<readonly [Payload<T, true>, Payload<T>]>;
   };
 }
 
@@ -77,10 +79,7 @@ export type RequestCallbackFn<T extends Request> = {
    * A callback function that's called when your request successfully completes with zero errors.
    * This function is passed the request's result `data` and `response`.
    */
-  onCompleted?: (
-    data: Payload<T, true>,
-    response: NonNullable<Payload<T>>,
-  ) => void;
+  onCompleted?: (data: Payload<T, true>, response: Payload<T>) => void;
   /**
    * A callback function that's called when the request encounters one or more errors.
    * This function is passed an `RequestError` object that contains either a networkError object or a `AxiosError`, depending on the error(s) that occurred.

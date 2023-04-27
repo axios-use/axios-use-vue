@@ -73,12 +73,12 @@ export function useRequest<T extends Request>(
       sources.value = [...unref(sources), _source];
 
       return _axiosIns({ ..._config, cancelToken: _source.token })
-        .then((res: NonNullable<Payload<T>>) => {
+        .then((res) => {
           removeCancelToken(_source.token);
 
           const _data = requestConfig.getResponseItem(res) as Payload<T, true>;
-          onCompleted?.(_data, res);
-          return [_data, res] as const;
+          onCompleted?.(_data, res as Payload<T>);
+          return [_data, res as Payload<T>] as const;
         })
         .catch((err: AxiosError<Payload<T>, BodyData<T>>) => {
           removeCancelToken(_source.token);

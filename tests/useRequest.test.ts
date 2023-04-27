@@ -176,7 +176,7 @@ describe("useRequest", () => {
           expect(d).toBeUndefined();
           expectTypeOf(d).toMatchTypeOf<undefined>();
           expect(r).toStrictEqual(mockItem);
-          expectTypeOf(r).toMatchTypeOf<MockDataUserItem>();
+          expectTypeOf(r).toMatchTypeOf<MockDataUserItem | undefined>();
         },
       },
     );
@@ -184,6 +184,6 @@ describe("useRequest", () => {
     expect(data).toBeUndefined();
     expectTypeOf(data).toMatchTypeOf<undefined>();
     expect(response).toStrictEqual(mockItem);
-    expectTypeOf(response).toMatchTypeOf<MockDataUserItem>();
+    expectTypeOf(response).toMatchTypeOf<MockDataUserItem | undefined>();
   });
 });
