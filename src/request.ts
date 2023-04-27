@@ -34,11 +34,11 @@ export interface Resource<
 export type Request<
   T = any,
   D = any,
-  K1 extends keyof T = never,
-  K2 extends keyof T[K1] = never,
-  K3 extends keyof T[K1][K2] = never,
-  K4 extends keyof T[K1][K2][K3] = never,
-  K5 extends keyof T[K1][K2][K3][K4] = never,
+  K1 extends keyof T = any,
+  K2 extends keyof T[K1] = any,
+  K3 extends keyof T[K1][K2] = any,
+  K4 extends keyof T[K1][K2][K3] = any,
+  K5 extends keyof T[K1][K2][K3][K4] = any,
 > = (...args: any[]) => Resource<T, D, K1, K2, K3, K4, K5>;
 
 export type Payload<T extends Request, Check = false> = Check extends true
