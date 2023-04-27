@@ -1,9 +1,9 @@
 import { describe, expect, test, vi, expectTypeOf } from "vitest";
 import { defineComponent, h } from "vue";
-import type { AxiosResponse, AxiosRequestConfig } from "axios";
+import type { AxiosResponse } from "axios";
 import axios from "axios";
 
-import AxiosUseVue, { useRequest, request } from "../src";
+import AxiosUseVue, { useRequest, _request } from "../src";
 import type { MockDataUserItem } from "./setup/mock-request";
 import {
   getAPIFuncs,
@@ -164,12 +164,9 @@ describe("useRequest", () => {
     });
     _instance.interceptors.response.use((d) => d.data);
 
-    const customRequest = <T, D = any>(config: AxiosRequestConfig) =>
-      request<T, D, false>(config);
-
     const [createRequest] = useRequest(
       (id: string) =>
-        customRequest<MockDataUserItem>({
+        _request<MockDataUserItem>({
           method: "get",
           url: `/user/${id}`,
         }),

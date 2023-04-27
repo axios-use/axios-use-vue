@@ -1,9 +1,9 @@
 import { describe, expect, test, expectTypeOf } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
-import type { AxiosResponse, AxiosRequestConfig } from "axios";
+import type { AxiosResponse } from "axios";
 import { computed, defineComponent, h, ref, unref, reactive } from "vue";
 
-import { useResource, request } from "../src";
+import { useResource, _request } from "../src";
 import type { MockDataUserItem } from "./setup/mock-request";
 import { getAPIFuncs, MOCK_DATA_USER_LIST } from "./setup/mock-request";
 
@@ -245,16 +245,13 @@ describe("useResource", () => {
   });
 
   test("types: custom response type", async () => {
-    const customRequest = <T, D = any>(config: AxiosRequestConfig) =>
-      request<T, D, false>(config);
-
     const Component = defineComponent({
       setup() {
         const id = ref("1");
 
         const [res] = useResource(
           (i: string) =>
-            customRequest<MockDataUserItem>({
+            _request<MockDataUserItem>({
               method: "get",
               url: `/user/${i}`,
             }),

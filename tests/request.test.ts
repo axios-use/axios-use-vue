@@ -1,6 +1,7 @@
-import { describe, it, expect } from "vitest";
-import type { AxiosRequestConfig } from "axios";
-import { request, createRequestError } from "../src";
+import { describe, it, expect, expectTypeOf } from "vitest";
+import type { AxiosRequestConfig, AxiosResponse } from "axios";
+import type { Payload, Resource } from "../src";
+import { request, _request, createRequestError } from "../src";
 
 const config1 = { url: "/config1", method: "GET" } as AxiosRequestConfig;
 const config2 = {
@@ -60,5 +61,36 @@ describe("createRequestError", () => {
     expect(createRequestError({} as any).code).toBeUndefined();
     expect(createRequestError({} as any).data).toBeUndefined();
     expect(createRequestError({} as any).original).toStrictEqual({});
+  });
+});
+
+describe("type checking", () => {
+  type DataType = { a: string; b?: number };
+  type ItemType = { z: string[] };
+  type DataType2 = DataType & { data?: ItemType };
+  const rq0 = () => _request<DataType>({});
+  const rq1 = () => request<DataType>({});
+  const rq2 = () => _request<DataType2>({});
+
+  it("request", () => {
+    expectTypeOf(rq0()).toEqualTypeOf<Resource<DataType, any, false>>();
+    expectTypeOf(rq1()).toEqualTypeOf<
+      Resource<DataType, any, AxiosResponse<DataType, any>>
+    >();
+
+    const c0 = null as unknown as Payload<typeof rq0>;
+    expectTypeOf(c0).toEqualTypeOf<DataType | undefined>();
+    const c1 = null as unknown as Payload<typeof rq0, true>;
+    expectTypeOf(c1).toEqualTypeOf<undefined>();
+
+    const c2 = null as unknown as Payload<typeof rq1>;
+    expectTypeOf(c2).toEqualTypeOf<AxiosResponse<DataType, any> | undefined>();
+    const c3 = null as unknown as Payload<typeof rq1, true>;
+    expectTypeOf(c3).toEqualTypeOf<DataType | undefined>();
+
+    const c4 = null as unknown as Payload<typeof rq2>;
+    expectTypeOf(c4).toEqualTypeOf<DataType2 | undefined>();
+    const c5 = null as unknown as Payload<typeof rq2, true>;
+    expectTypeOf(c5).toEqualTypeOf<ItemType | undefined>();
   });
 });

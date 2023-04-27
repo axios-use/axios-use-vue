@@ -14,7 +14,7 @@ export type _ResponseDataItemType<T> = T extends AxiosResponse<infer D1>
 
 export interface Resource<T, D = any, W = AxiosResponse>
   extends AxiosRequestConfig<D> {
-  _payload?: W extends AxiosResponse ? AxiosResponse<T> : T;
+  _payload?: W extends AxiosResponse ? AxiosResponse<T, D> : T;
 }
 
 export type Request<T = any, D = any, W = any> = (
@@ -71,11 +71,18 @@ export type RequestCallbackFn<T extends Request> = {
 /**
  * For TypeScript type deduction
  */
-export function request<T, D = any, W = AxiosResponse>(
+export function _request<T, D = any, W = false>(
   config: AxiosRequestConfig<D>,
 ): Resource<T, D, W> {
   return config;
 }
+
+/**
+ * For TypeScript type deduction
+ */
+export const request = <T, D = any, W = AxiosResponse<T, D>>(
+  config: AxiosRequestConfig<D>,
+) => _request<T, D, W>(config);
 
 export function createRequestError<
   T = any,
