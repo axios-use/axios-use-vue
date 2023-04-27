@@ -260,6 +260,8 @@ const [reqState] = useResource(
 The `request` function allows you to define the response type coming from it. It also helps with creating a good pattern on defining your API calls and the expected results. It's just an identity function that accepts the request config and returns it. Both `useRequest` and `useResource` extract the expected and annotated type definition and resolve it on the `response.data` field.
 
 ```ts
+import { request } from "@axios-use/vue";
+
 const api = {
   getUsers: () => {
     return request<Users>({
@@ -283,6 +285,25 @@ You can also use these `request` functions directly in `axios`.
 const usersRes = await axios(api.getUsers());
 
 const userRes = await axios(api.getUserInfo("ID001"));
+```
+
+custom response type. (if you change the response's return value. like `axios.interceptors.response`)
+
+```ts
+import { request, _request } from "@axios-use/vue";
+
+const [reqState] = useResource(() => request<DataType>({ url: `/users` }));
+// AxiosResponse<DataType>
+unref(reqState).response;
+// DataType
+unref(reqState).data;
+
+// custom response type
+const [reqState] = useResource(() => _request<MyWrapper<DataType>>({ url: `/users` }));
+// MyWrapper<DataType>
+unref(reqState).response;
+// MyWrapper<DataType>["data"]. maybe `undefined` type
+unref(reqState).data;
 ```
 
 #### createRequestError
