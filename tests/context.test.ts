@@ -93,7 +93,7 @@ describe("context", () => {
         const vm = getCurrentInstance2();
 
         expect(
-          (vm.proxy as any)._provided[AXIOS_USE_VUE_PROVIDE_KEY as any]
+          (vm?.proxy as any)._provided[AXIOS_USE_VUE_PROVIDE_KEY as any]
             ?.instance,
         ).toBe(mockAxiosIns);
 
@@ -153,6 +153,47 @@ describe("context", () => {
 
     mount(Component, (app) => {
       app.use(AxioUseVue, { instance: mockAxiosIns });
+    });
+  });
+});
+
+describe("config - getResponseItem", () => {
+  test("default value", () => {
+    const Component = defineComponent({
+      setup() {
+        const { getResponseItem } = getUseRequestConfig();
+        expect(getResponseItem).toBeDefined();
+        expect(getResponseItem({ data: 1 })).toBe(1);
+        expect(getResponseItem({})).toBeUndefined();
+        expect(getResponseItem()).toBeUndefined();
+
+        return () => h("div");
+      },
+    });
+
+    mount(Component);
+  });
+
+  test("custom", () => {
+    const fn = (r) => ({
+      o: r,
+      d: r?.data,
+      msg: r?.message || r?.statusText || r?.status,
+    });
+    const Component = defineComponent({
+      setup() {
+        const { getResponseItem } = getUseRequestConfig();
+        expect(getResponseItem).toBeDefined();
+        expect(getResponseItem({ data: 1 })).toStrictEqual(fn({ data: 1 }));
+        expect(getResponseItem({})).toStrictEqual(fn({}));
+        expect(getResponseItem()).toStrictEqual(fn(undefined));
+
+        return () => h("div");
+      },
+    });
+
+    mount(Component, (app) => {
+      app.use(AxioUseVue, { getResponseItem: fn });
     });
   });
 });

@@ -1,6 +1,6 @@
 import { describe, expect, test, vi, expectTypeOf } from "vitest";
 import { defineComponent, h } from "vue";
-import type { AxiosResponse } from "axios";
+import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import axios from "axios";
 
 import AxiosUseVue, { useRequest, _request } from "../src";
@@ -185,5 +185,63 @@ describe("useRequest", () => {
     expectTypeOf(data).toMatchTypeOf<undefined>();
     expect(response).toStrictEqual(mockItem);
     expectTypeOf(response).toMatchTypeOf<MockDataUserItem | undefined>();
+  });
+
+  test("custom response (custom request and getResponseItem)", async () => {
+    const TARGET_ID = "1";
+    const mockItem = MOCK_DATA_USER_LIST.find((i) => i.id === TARGET_ID);
+
+    type _MyRes<T> = { status: number; result?: T; message?: string };
+
+    const _getResponseItem = (r: _MyRes<unknown>) => r.result;
+    const _instance = axios.create({
+      baseURL: BASE_URL,
+    });
+    _instance.interceptors.response.use(
+      (d) =>
+        ({
+          status: (d.data?.code as number) || d.status,
+          result: d.data,
+          message: d.data?.msg || d.statusText,
+        } as any),
+    );
+    const myrequest = <T>(config: AxiosRequestConfig) =>
+      _request<{ status: number; result?: T; message?: string }, any, "result">(
+        config,
+      );
+
+    const [createRequest] = useRequest(
+      (id: string) =>
+        myrequest<MockDataUserItem>({
+          method: "get",
+          url: `/user/${id}`,
+        }),
+      {
+        instance: _instance,
+        getResponseItem: _getResponseItem,
+        onCompleted: (d, r) => {
+          expect(d).toStrictEqual(mockItem);
+          expectTypeOf(d).toMatchTypeOf<MockDataUserItem | undefined>();
+          expect(r).toStrictEqual({
+            status: 200,
+            result: mockItem,
+            message: "OK",
+          });
+          expectTypeOf(r).toMatchTypeOf<_MyRes<MockDataUserItem> | undefined>();
+        },
+      },
+    );
+
+    const [data, response] = await createRequest(TARGET_ID).ready();
+    expect(data).toStrictEqual(mockItem);
+    expectTypeOf(data).toMatchTypeOf<MockDataUserItem | undefined>();
+    expect(response).toStrictEqual({
+      status: 200,
+      result: mockItem,
+      message: "OK",
+    });
+    expectTypeOf(response).toMatchTypeOf<
+      _MyRes<MockDataUserItem> | undefined
+    >();
   });
 });

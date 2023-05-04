@@ -42,7 +42,7 @@ export type UseResourceResult<T extends Request> = [
 
 export type UseResourceOptions<T extends Request> = Pick<
   RequestConfigType,
-  "instance"
+  "instance" | "getResponseItem"
 > &
   RequestCallbackFn<T> & {
     /** Conditional Fetching */
@@ -96,6 +96,7 @@ export function useResource<T extends Request>(
     onCompleted: options?.onCompleted,
     onError: options?.onError,
     instance: options?.instance,
+    getResponseItem: options?.getResponseItem,
   });
 
   const [state, dispatch] = useReducer(getNextState, {

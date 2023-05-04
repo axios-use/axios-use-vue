@@ -12,7 +12,7 @@ const INJECT_INSIDE_WARN_MSG =
 export type RequestConfigType = {
   /** Axios instance. You can pass your axios with a custom config. */
   instance?: AxiosInstance;
-  /** custom data value. @default response['data'] */
+  /** custom `data` value. @default response['data'] */
   getResponseItem?: (res?: any) => unknown;
 };
 

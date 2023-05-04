@@ -22,6 +22,8 @@ import { createRequestError } from "./request";
 
 export type UseRequestOptions<T extends Request> = RequestCallbackFn<T> & {
   instance?: AxiosInstance;
+  /** custom returns the value of `data`(index 0). @default (r) => r?.data */
+  getResponseItem?: (res?: any) => unknown;
 };
 
 export type UseRequestResult<T extends Request> = [
@@ -76,7 +78,11 @@ export function useRequest<T extends Request>(
         .then((res) => {
           removeCancelToken(_source.token);
 
-          const _data = requestConfig.getResponseItem(res) as Payload<T, true>;
+          const _data = (
+            options?.getResponseItem
+              ? options.getResponseItem(res as Payload<T>)
+              : requestConfig.getResponseItem(res)
+          ) as Payload<T, true>;
           onCompleted?.(_data, res as Payload<T>);
           return [_data, res as Payload<T>] as const;
         })
