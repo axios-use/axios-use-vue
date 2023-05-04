@@ -12,23 +12,17 @@ export interface Resource<
   K1 extends keyof T = never,
   K2 extends keyof T[K1] = never,
   K3 extends keyof T[K1][K2] = never,
-  K4 extends keyof T[K1][K2][K3] = never,
-  K5 extends keyof T[K1][K2][K3][K4] = never,
 > extends AxiosRequestConfig<D> {
   _payload?: T;
-  _payload_item?: [K5] extends [never]
-    ? [K4] extends [never]
-      ? [K3] extends [never]
-        ? [K2] extends [never]
-          ? [K1] extends [never]
-            ? T extends AxiosResponse<infer DD> | { data?: infer DD }
-              ? DD
-              : undefined
-            : T[K1]
-          : T[K1][K2]
-        : T[K1][K2][K3]
-      : T[K1][K2][K3][K4]
-    : T[K1][K2][K3][K4][K5];
+  _payload_item?: [K3] extends [never]
+    ? [K2] extends [never]
+      ? [K1] extends [never]
+        ? T extends AxiosResponse<infer DD> | { data?: infer DD }
+          ? DD
+          : undefined
+        : T[K1]
+      : T[K1][K2]
+    : T[K1][K2][K3];
 }
 
 export type Request<
@@ -37,9 +31,7 @@ export type Request<
   K1 extends keyof T = any,
   K2 extends keyof T[K1] = any,
   K3 extends keyof T[K1][K2] = any,
-  K4 extends keyof T[K1][K2][K3] = any,
-  K5 extends keyof T[K1][K2][K3][K4] = any,
-> = (...args: any[]) => Resource<T, D, K1, K2, K3, K4, K5>;
+> = (...args: any[]) => Resource<T, D, K1, K2, K3>;
 
 export type Payload<T extends Request, Check = false> = Check extends true
   ? ReturnType<T>["_payload_item"]
@@ -96,9 +88,7 @@ export function _request<
   K1 extends keyof T = never,
   K2 extends keyof T[K1] = never,
   K3 extends keyof T[K1][K2] = never,
-  K4 extends keyof T[K1][K2][K3] = never,
-  K5 extends keyof T[K1][K2][K3][K4] = never,
->(config: AxiosRequestConfig<D>): Resource<T, D, K1, K2, K3, K4, K5> {
+>(config: AxiosRequestConfig<D>): Resource<T, D, K1, K2, K3> {
   return config;
 }
 
