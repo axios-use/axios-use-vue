@@ -244,4 +244,61 @@ describe("useRequest", () => {
       _MyRes<MockDataUserItem> | undefined
     >();
   });
+
+  test("custom response data (The first value of the array returned)", async () => {
+    const Component = defineComponent({
+      setup() {
+        const TARGET_ID = "1";
+        const mockItem = MOCK_DATA_USER_LIST.find((i) => i.id === TARGET_ID);
+
+        const _getResponseItem = (r: AxiosResponse<any>) => r.data?.name;
+        const _instance = axios.create({
+          baseURL: BASE_URL,
+        });
+        const myrequest = <T extends { name?: string }>(
+          config: AxiosRequestConfig,
+        ) => _request<AxiosResponse<T>, any, "data", "name">(config);
+
+        const [createRequest] = useRequest(
+          (id: string) =>
+            myrequest<MockDataUserItem>({
+              method: "get",
+              url: `/user/${id}`,
+            }),
+          {
+            instance: _instance,
+            getResponseItem: _getResponseItem,
+            onCompleted: (d, r) => {
+              // custom `data` value
+              expect(d).toStrictEqual(mockItem?.name);
+              expectTypeOf(d).toMatchTypeOf<string | undefined>();
+              expect(r.data).toStrictEqual(mockItem);
+              expectTypeOf(r).toMatchTypeOf<
+                AxiosResponse<MockDataUserItem> | undefined
+              >();
+            },
+          },
+        );
+
+        createRequest(TARGET_ID)
+          .ready()
+          .then(([data, response]) => {
+            // custom `data` value
+            expect(data).toStrictEqual(mockItem?.name);
+            expectTypeOf(data).toMatchTypeOf<string | undefined>();
+            expect(response.data).toStrictEqual(mockItem);
+            expectTypeOf(response).toMatchTypeOf<
+              AxiosResponse<MockDataUserItem> | undefined
+            >();
+          })
+          .catch(() => {
+            expect(2).toBe(1);
+          });
+
+        return () => h("div");
+      },
+    });
+
+    mount(Component);
+  });
 });
