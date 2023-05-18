@@ -54,9 +54,10 @@ import { useRequest, useResource } from "@axios-use/vue";
 
 ### Options (optional)
 
-| config   | type   | default | explain                                                       |
-| -------- | ------ | ------- | ------------------------------------------------------------- |
-| instance | object | `axios` | Axios instance. You can pass your axios with a custom config. |
+| config          | type     | default         | explain                                                                                                               |
+| --------------- | -------- | --------------- | --------------------------------------------------------------------------------------------------------------------- |
+| instance        | object   | `axios`         | Axios instance. You can pass your axios with a custom config.                                                         |
+| getResponseItem | function | `(r) => r.data` | custom `data` value. The default value is response['data']. [PR#1](https://github.com/axios-use/axios-use-vue/pull/1) |
 
 ```ts
 import axios from "axios";
@@ -83,12 +84,13 @@ Vue.use(AxiosUseVue, { instance: axiosInstance });
 
 ### useRequest
 
-| option              | type            | explain                                          |
-| ------------------- | --------------- | ------------------------------------------------ |
-| fn                  | function        | get AxiosRequestConfig function                  |
-| options.onCompleted | function        | This function is passed the query's result data. |
-| options.onError     | function        | This function is passed an `RequestError` object |
-| options.instance    | `AxiosInstance` | Customize the Axios instance of the current item |
+| option                  | type            | explain                                          |
+| ----------------------- | --------------- | ------------------------------------------------ |
+| fn                      | function        | get AxiosRequestConfig function                  |
+| options.onCompleted     | function        | This function is passed the query's result data. |
+| options.onError         | function        | This function is passed an `RequestError` object |
+| options.instance        | `AxiosInstance` | Customize the Axios instance of the current item |
+| options.getResponseItem | function        | custom returns the value of `data`(index 0).     |
 
 ```ts
 // js
@@ -136,15 +138,16 @@ const [createRequest, { hasPending, cancel }] = useRequest(
 
 ### useResource
 
-| option               | type            | explain                                                             |
-| -------------------- | --------------- | ------------------------------------------------------------------- |
-| fn                   | function        | get AxiosRequestConfig function                                     |
-| parameters           | array \| false  | `fn` function parameters. effect dependency list                    |
-| options.filter       | function        | Request filter. if return a falsy value, will not start the request |
-| options.defaultState | object          | Initialize the state value. `{data, response, error, isLoading}`    |
-| options.onCompleted  | function        | This function is passed the query's result data.                    |
-| options.onError      | function        | This function is passed an `RequestError` object                    |
-| options.instance     | `AxiosInstance` | Customize the Axios instance of the current item                    |
+| option                  | type            | explain                                                             |
+| ----------------------- | --------------- | ------------------------------------------------------------------- |
+| fn                      | function        | get AxiosRequestConfig function                                     |
+| parameters              | array \| false  | `fn` function parameters. effect dependency list                    |
+| options.filter          | function        | Request filter. if return a falsy value, will not start the request |
+| options.defaultState    | object          | Initialize the state value. `{data, response, error, isLoading}`    |
+| options.onCompleted     | function        | This function is passed the query's result data.                    |
+| options.onError         | function        | This function is passed an `RequestError` object                    |
+| options.instance        | `AxiosInstance` | Customize the Axios instance of the current item                    |
+| options.getResponseItem | function        | custom returns the value of `data`(index 0).                        |
 
 ```ts
 // js
@@ -302,7 +305,8 @@ unref(reqState).data;
 const [reqState] = useResource(() => _request<MyWrapper<DataType>>({ url: `/users` }));
 // MyWrapper<DataType>
 unref(reqState).response;
-// MyWrapper<DataType>["data"]. maybe `undefined` type
+// MyWrapper<DataType>["data"]. maybe `undefined` type.
+// You can use `getResponseItem` to customize the value of `data`
 unref(reqState).data;
 ```
 
