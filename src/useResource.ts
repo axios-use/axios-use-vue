@@ -112,19 +112,17 @@ export function useResource<T extends Request>(
 
     const { ready, cancel } = createRequest(...args);
 
-    void (async () => {
-      try {
-        dispatch({ type: "start" });
-        const [data, response] = await ready();
-
+    dispatch({ type: "start" });
+    ready()
+      .then(([data, response]) => {
         dispatch({ type: "success", data, response });
-      } catch (e) {
+      })
+      .catch((e) => {
         const error = e as RequestError<Payload<T>, BodyData<T>>;
         if (!error.isCancel) {
           dispatch({ type: "error", error });
         }
-      }
-    })();
+      });
 
     return cancel;
   };
