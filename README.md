@@ -54,9 +54,10 @@ import { useRequest, useResource } from "@axios-use/vue";
 
 ### Options (optional)
 
-| config   | type   | default | explain                                                       |
-| -------- | ------ | ------- | ------------------------------------------------------------- |
-| instance | object | `axios` | Axios instance. You can pass your axios with a custom config. |
+| config          | type     | default         | explain                                                                                                               |
+| --------------- | -------- | --------------- | --------------------------------------------------------------------------------------------------------------------- |
+| instance        | object   | `axios`         | Axios instance. You can pass your axios with a custom config.                                                         |
+| getResponseItem | function | `(r) => r.data` | custom `data` value. The default value is response['data']. [PR#1](https://github.com/axios-use/axios-use-vue/pull/1) |
 
 ```ts
 import axios from "axios";
@@ -83,12 +84,13 @@ Vue.use(AxiosUseVue, { instance: axiosInstance });
 
 ### useRequest
 
-| option              | type            | explain                                          |
-| ------------------- | --------------- | ------------------------------------------------ |
-| fn                  | function        | get AxiosRequestConfig function                  |
-| options.onCompleted | function        | This function is passed the query's result data. |
-| options.onError     | function        | This function is passed an `RequestError` object |
-| options.instance    | `AxiosInstance` | Customize the Axios instance of the current item |
+| option                  | type            | explain                                          |
+| ----------------------- | --------------- | ------------------------------------------------ |
+| fn                      | function        | get AxiosRequestConfig function                  |
+| options.onCompleted     | function        | This function is passed the query's result data. |
+| options.onError         | function        | This function is passed an `RequestError` object |
+| options.instance        | `AxiosInstance` | Customize the Axios instance of the current item |
+| options.getResponseItem | function        | custom returns the value of `data`(index 0).     |
 
 ```ts
 // js
@@ -136,15 +138,16 @@ const [createRequest, { hasPending, cancel }] = useRequest(
 
 ### useResource
 
-| option               | type            | explain                                                             |
-| -------------------- | --------------- | ------------------------------------------------------------------- |
-| fn                   | function        | get AxiosRequestConfig function                                     |
-| parameters           | array \| false  | `fn` function parameters. effect dependency list                    |
-| options.filter       | function        | Request filter. if return a falsy value, will not start the request |
-| options.defaultState | object          | Initialize the state value. `{data, response, error, isLoading}`    |
-| options.onCompleted  | function        | This function is passed the query's result data.                    |
-| options.onError      | function        | This function is passed an `RequestError` object                    |
-| options.instance     | `AxiosInstance` | Customize the Axios instance of the current item                    |
+| option                  | type            | explain                                                             |
+| ----------------------- | --------------- | ------------------------------------------------------------------- |
+| fn                      | function        | get AxiosRequestConfig function                                     |
+| parameters              | array \| false  | `fn` function parameters. effect dependency list                    |
+| options.filter          | function        | Request filter. if return a falsy value, will not start the request |
+| options.defaultState    | object          | Initialize the state value. `{data, response, error, isLoading}`    |
+| options.onCompleted     | function        | This function is passed the query's result data.                    |
+| options.onError         | function        | This function is passed an `RequestError` object                    |
+| options.instance        | `AxiosInstance` | Customize the Axios instance of the current item                    |
+| options.getResponseItem | function        | custom returns the value of `data`(index 0).                        |
 
 ```ts
 // js
@@ -260,6 +263,8 @@ const [reqState] = useResource(
 The `request` function allows you to define the response type coming from it. It also helps with creating a good pattern on defining your API calls and the expected results. It's just an identity function that accepts the request config and returns it. Both `useRequest` and `useResource` extract the expected and annotated type definition and resolve it on the `response.data` field.
 
 ```ts
+import { request } from "@axios-use/vue";
+
 const api = {
   getUsers: () => {
     return request<Users>({
@@ -283,6 +288,26 @@ You can also use these `request` functions directly in `axios`.
 const usersRes = await axios(api.getUsers());
 
 const userRes = await axios(api.getUserInfo("ID001"));
+```
+
+custom response type. (if you change the response's return value. like `axios.interceptors.response`)
+
+```ts
+import { request, _request } from "@axios-use/vue";
+
+const [reqState] = useResource(() => request<DataType>({ url: `/users` }));
+// AxiosResponse<DataType>
+unref(reqState).response;
+// DataType
+unref(reqState).data;
+
+// custom response type
+const [reqState] = useResource(() => _request<MyWrapper<DataType>>({ url: `/users` }));
+// MyWrapper<DataType>
+unref(reqState).response;
+// MyWrapper<DataType>["data"]. maybe `undefined` type.
+// You can use `getResponseItem` to customize the value of `data`
+unref(reqState).data;
 ```
 
 #### createRequestError

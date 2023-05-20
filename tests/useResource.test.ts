@@ -5,7 +5,11 @@ import { computed, defineComponent, h, ref, unref, reactive } from "vue";
 
 import { useResource, _request } from "../src";
 import type { MockDataUserItem } from "./setup/mock-request";
-import { getAPIFuncs, MOCK_DATA_USER_LIST } from "./setup/mock-request";
+import {
+  BASE_URL,
+  getAPIFuncs,
+  MOCK_DATA_USER_LIST,
+} from "./setup/mock-request";
 
 describe("useResource", () => {
   test("should be defined", () => {
@@ -17,7 +21,16 @@ describe("useResource", () => {
       setup() {
         const id = ref("1");
         const params = computed(() => ({ id: unref(id) }));
-        const [res] = useResource(getAPIFuncs(true).user.get, [params]);
+        const [res] = useResource(getAPIFuncs(true).user.get, [params], {
+          onCompleted: (d, r) => {
+            expectTypeOf(d).toEqualTypeOf<MockDataUserItem | undefined>();
+            expectTypeOf(r).toEqualTypeOf<AxiosResponse<MockDataUserItem>>();
+
+            const _item = MOCK_DATA_USER_LIST.find((i) => i.id === unref(id));
+            expect(d).toStrictEqual(_item);
+            expect(r.data).toStrictEqual(_item);
+          },
+        });
 
         const _unref_res = unref(res);
         expect(_unref_res.isLoading).toBeTruthy();
@@ -247,22 +260,38 @@ describe("useResource", () => {
   test("types: custom response type", async () => {
     const Component = defineComponent({
       setup() {
-        const id = ref("1");
-
-        const [res] = useResource(
+        const [res01] = useResource(
           (i: string) =>
             _request<MockDataUserItem>({
+              baseURL: BASE_URL,
               method: "get",
               url: `/user/${i}`,
             }),
-          [id],
+          false,
         );
 
-        const _unref_res = unref(res);
+        const _unref_res01 = unref(res01);
 
-        expectTypeOf(_unref_res.data).toEqualTypeOf<undefined>();
-        expectTypeOf(_unref_res.response).toEqualTypeOf<
+        expectTypeOf(_unref_res01.data).toEqualTypeOf<undefined>();
+        expectTypeOf(_unref_res01.response).toEqualTypeOf<
           MockDataUserItem | undefined
+        >();
+
+        const [res02] = useResource(
+          (i: string) =>
+            _request<AxiosResponse<MockDataUserItem>, any, "data", "name">({
+              baseURL: BASE_URL,
+              method: "get",
+              url: `/user/${i}`,
+            }),
+          false,
+        );
+
+        const _unref_res02 = unref(res02);
+
+        expectTypeOf(_unref_res02.data).toEqualTypeOf<string | undefined>();
+        expectTypeOf(_unref_res02.response).toEqualTypeOf<
+          AxiosResponse<MockDataUserItem> | undefined
         >();
 
         return () => h("div");

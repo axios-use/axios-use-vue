@@ -73,9 +73,9 @@ describe("type checking", () => {
   const rq2 = () => _request<DataType2>({});
 
   it("request", () => {
-    expectTypeOf(rq0()).toEqualTypeOf<Resource<DataType, any, false>>();
+    expectTypeOf(rq0()).toEqualTypeOf<Resource<DataType, any>>();
     expectTypeOf(rq1()).toEqualTypeOf<
-      Resource<DataType, any, AxiosResponse<DataType, any>>
+      Resource<AxiosResponse<DataType>, any, "data">
     >();
 
     const c0 = null as unknown as Payload<typeof rq0>;
@@ -84,7 +84,7 @@ describe("type checking", () => {
     expectTypeOf(c1).toEqualTypeOf<undefined>();
 
     const c2 = null as unknown as Payload<typeof rq1>;
-    expectTypeOf(c2).toEqualTypeOf<AxiosResponse<DataType, any> | undefined>();
+    expectTypeOf(c2).toEqualTypeOf<AxiosResponse<DataType, any>>();
     const c3 = null as unknown as Payload<typeof rq1, true>;
     expectTypeOf(c3).toEqualTypeOf<DataType | undefined>();
 
