@@ -1,3 +1,18 @@
+# [0.2.0](https://github.com/axios-use/axios-use-vue/compare/v0.1.1...v0.2.0) (2023-05-22)
+
+
+### Bug Fixes
+
+* **type:** `onCompleted` response generic error ([3c7e56f](https://github.com/axios-use/axios-use-vue/commit/3c7e56f5737ab34e2dc8706a8f66f29ebce0994f))
+
+
+### Features
+
+* **request:** export `_request` function to custom data or response type ([4ad4896](https://github.com/axios-use/axios-use-vue/commit/4ad4896a11889f29077c339636362f0bf48d83a6), [ec40987](https://github.com/axios-use/axios-use-vue/commit/ec40987447f8f6a3329ef65bfa7ac1ef6abec2cb))
+* **options:** `getResponseItem` options (custom data value)  ([#1](https://github.com/axios-use/axios-use-vue/pull/1))
+
+
+
 ## [0.1.1](https://github.com/axios-use/axios-use-vue/compare/v0.1.0...v0.1.1) (2023-04-15)
 
 
