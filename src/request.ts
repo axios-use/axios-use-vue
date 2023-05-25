@@ -42,16 +42,14 @@ export type Payload<T extends Request, Check = false> = Check extends true
   : _AnyKeyValue<ReturnType<T>, "_payload">;
 export type BodyData<T extends Request> = _AnyKeyValue<ReturnType<T>, "data">;
 
-export interface RequestFactory<T extends Request> {
-  (...args: Parameters<T>): {
-    cancel: Canceler;
-    ready: () => Promise<readonly [Payload<T, true>, Payload<T>]>;
-  };
-}
+export type RequestFactory<T extends Request> = (...args: Parameters<T>) => {
+  cancel: Canceler;
+  ready: () => Promise<readonly [Payload<T, true>, Payload<T>]>;
+};
 
-export interface RequestDispatcher<T extends Request> {
-  (...args: Parameters<T>): Canceler;
-}
+export type RequestDispatcher<T extends Request> = (
+  ...args: Parameters<T>
+) => Canceler;
 
 /**
  * Normalize the error response returned from `@axios-use/vue`
