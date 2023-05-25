@@ -82,6 +82,49 @@ describe("useResource", () => {
     expect(wrapper.get('[data-t-id="res.isLoading"]').text()).toBe("false");
   });
 
+  test("any type (without `request`)", async () => {
+    defineComponent({
+      setup() {
+        const [res] = useResource(getAPIFuncs(true).user.anyTypeList, false, {
+          onCompleted: (d, r) => {
+            expectTypeOf(d).toEqualTypeOf<any>();
+            expectTypeOf(r).toEqualTypeOf<any>();
+          },
+        });
+
+        const _unref_res = unref(res);
+
+        expectTypeOf(_unref_res.data).toEqualTypeOf<any>();
+        expectTypeOf(_unref_res.response).toEqualTypeOf<any>();
+        return () => h("div");
+      },
+    });
+  });
+  test("any type (`request` without genericity)", async () => {
+    defineComponent({
+      setup() {
+        const [res] = useResource(
+          getAPIFuncs(true).user.anyTypeWithoutGenericityList,
+          false,
+          {
+            onCompleted: (d, r) => {
+              expectTypeOf(d).toEqualTypeOf<any>();
+              expectTypeOf(r).toEqualTypeOf<AxiosResponse<any>>();
+            },
+          },
+        );
+
+        const _unref_res = unref(res);
+
+        expectTypeOf(_unref_res.data).toEqualTypeOf<any>();
+        expectTypeOf(_unref_res.response).toEqualTypeOf<
+          AxiosResponse<any> | undefined
+        >();
+        return () => h("div");
+      },
+    });
+  });
+
   test("options: filter", async () => {
     const Component = defineComponent({
       setup() {

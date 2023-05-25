@@ -33,12 +33,14 @@ export type Request<
   K3 extends keyof T[K1][K2] = any,
 > = (...args: any[]) => Resource<T, D, K1, K2, K3>;
 
+type _AnyKeyValue<T, K> = K extends keyof T ? T[K] : any;
+
 export type Payload<T extends Request, Check = false> = Check extends true
-  ? ReturnType<T>["_payload_item"]
+  ? _AnyKeyValue<ReturnType<T>, "_payload_item">
   : T extends Request<AxiosResponse>
-  ? NonNullable<ReturnType<T>["_payload"]>
-  : ReturnType<T>["_payload"];
-export type BodyData<T extends Request> = ReturnType<T>["data"];
+  ? Exclude<_AnyKeyValue<ReturnType<T>, "_payload">, undefined>
+  : _AnyKeyValue<ReturnType<T>, "_payload">;
+export type BodyData<T extends Request> = _AnyKeyValue<ReturnType<T>, "data">;
 
 export interface RequestFactory<T extends Request> {
   (...args: Parameters<T>): {
@@ -95,7 +97,7 @@ export function _request<
 /**
  * For TypeScript type deduction
  */
-export const request = <T, D = any>(config: AxiosRequestConfig<D>) =>
+export const request = <T = any, D = any>(config: AxiosRequestConfig<D>) =>
   _request<AxiosResponse<T, D>, D>(config);
 
 export function createRequestError<

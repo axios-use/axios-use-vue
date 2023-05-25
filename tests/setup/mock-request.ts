@@ -65,6 +65,19 @@ export const getAPIFuncs = (widthBaseUrl?: boolean) => {
           method: "get",
           url: "/users",
         }),
+      // for type checking
+      anyTypeList: () => ({
+        baseURL,
+        method: "get",
+        url: "/users",
+      }),
+      // for type checking
+      anyTypeWithoutGenericityList: () =>
+        request({
+          baseURL,
+          method: "get",
+          url: "/users",
+        }),
       get: (params?: { id: string }) =>
         request<MockDataUserItem>({
           baseURL,

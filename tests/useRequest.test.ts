@@ -29,6 +29,45 @@ describe("useRequest", () => {
     expect(response.status).toBe(200);
   });
 
+  test("any type (without `request`)", async () => {
+    const [createRequest] = useRequest(getAPIFuncs(true).user.anyTypeList, {
+      onCompleted(data, response) {
+        expectTypeOf(data).toEqualTypeOf<any>();
+        expectTypeOf(response).toEqualTypeOf<any>();
+        expect(data).toStrictEqual(MOCK_DATA_USER_LIST);
+        expect(response.data).toStrictEqual(MOCK_DATA_USER_LIST);
+      },
+    });
+
+    const [data, response] = await createRequest().ready();
+    expect(data).toStrictEqual(MOCK_DATA_USER_LIST);
+    expect(response.data).toStrictEqual(MOCK_DATA_USER_LIST);
+    expect(response.status).toBe(200);
+    expectTypeOf(data).toEqualTypeOf<any>();
+    expectTypeOf(response).toEqualTypeOf<any>();
+  });
+
+  test("any type (`request` without genericity)", async () => {
+    const [createRequest] = useRequest(
+      getAPIFuncs(true).user.anyTypeWithoutGenericityList,
+      {
+        onCompleted(data, response) {
+          expectTypeOf(data).toEqualTypeOf<any>();
+          expectTypeOf(response).toEqualTypeOf<AxiosResponse<any>>();
+          expect(data).toStrictEqual(MOCK_DATA_USER_LIST);
+          expect(response.data).toStrictEqual(MOCK_DATA_USER_LIST);
+        },
+      },
+    );
+
+    const [data, response] = await createRequest().ready();
+    expect(data).toStrictEqual(MOCK_DATA_USER_LIST);
+    expect(response.data).toStrictEqual(MOCK_DATA_USER_LIST);
+    expect(response.status).toBe(200);
+    expectTypeOf(data).toEqualTypeOf<any>();
+    expectTypeOf(response).toEqualTypeOf<AxiosResponse<any>>();
+  });
+
   test("check createRequest", async () => {
     const Component = defineComponent({
       setup() {
