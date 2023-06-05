@@ -1,3 +1,12 @@
+## [0.2.1](https://github.com/axios-use/axios-use-vue/compare/v0.2.0...v0.2.1) (2023-06-05)
+
+
+### Features
+
+* **types:** `any` replaces `unknown` as the response type when using js ([d23653c](https://github.com/axios-use/axios-use-vue/commit/d23653ccbf7815012e27b2da1e2b5ca079e55ff5))
+
+
+
 # [0.2.0](https://github.com/axios-use/axios-use-vue/compare/v0.1.1...v0.2.0) (2023-05-22)
 
 
