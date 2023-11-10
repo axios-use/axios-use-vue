@@ -25,6 +25,11 @@ A Vue composition utilities for Axios. Lightweight, cancelable and less change.
 <br>
 <br>
 
+- 🪽 Lightweight with **1.7kb** bundle size
+- 👼 Less change. Increment, doesn't affect current Axios usage
+- ✨ Written in TypeScript
+- 🚀 Cancelable. Auto / Manual cancellation of duplicate requests
+
 ## Usage
 
 ### Quick Start
