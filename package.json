@@ -16,7 +16,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore",
     "lint:fix": "npm run lint --fix",
     "format": "prettier --write '**/*' --config ./.prettierrc",
-    "postinstall": "node ./demi/postinstall.js",
+    "postinstall": "node ./demi/postinstall.cjs",
     "prepare": "npm run build"
   },
   "author": "wangcch <wangcch.cc@gmail.com>",
