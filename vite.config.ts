@@ -26,6 +26,7 @@ export default defineConfig({
           format: "cjs",
           dir: "lib",
           preserveModules: true,
+          exports: "named",
         },
         {
           format: "es",
@@ -40,6 +41,7 @@ export default defineConfig({
           preserveModules: false,
           entryFileNames: "axios-use-vue.umd.js",
           sourcemap: true,
+          exports: "named",
         },
       ],
     },
