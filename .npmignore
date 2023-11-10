@@ -24,3 +24,4 @@ vitest.config.ts
 .npmrc
 package-lock.json
 yarn.lock
+vite.config.ts
