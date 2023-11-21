@@ -29,6 +29,7 @@ A Vue composition utilities for Axios. Lightweight, cancelable and less change.
 - 👼 Less change. Increment, doesn't affect current Axios usage
 - ✨ Written in TypeScript
 - 🚀 Cancelable. Auto / Manual cancellation of duplicate requests
+- 🙆‍♂️ Works with both Vue 2.7 and Vue 3
 
 ## Usage
 
