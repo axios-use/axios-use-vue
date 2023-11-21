@@ -1,3 +1,12 @@
+## [0.2.2](https://github.com/axios-use/axios-use-vue/compare/v0.2.1...v0.2.2) (2023-11-21)
+
+
+### Feature
+
+* **build:** add umd modules and `type: module`  ([b198da0](https://github.com/axios-use/axios-use-vue/commit/b198da089cff1afb0de2236c97219755572a57e4))
+
+
+
 ## [0.2.1](https://github.com/axios-use/axios-use-vue/compare/v0.2.0...v0.2.1) (2023-06-05)
 
 
