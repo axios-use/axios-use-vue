@@ -12,7 +12,6 @@ A Vue composition utilities for Axios. Lightweight, cancelable and less change.
 
 <p align="center">
 <a href="https://www.npmjs.com/package/@axios-use/vue" target="__blank"><img src="https://img.shields.io/npm/v/@axios-use/vue.svg" alt="NPM version"></a>
-<a href="https://packagephobia.com/result?p=%40axios-use%2Fvue" target="__blank"><img src="https://badgen.net/packagephobia/install/@axios-use/vue" alt="install size"></a>
 <a href="https://bundlephobia.com/package/@axios-use/vue" target="__blank"><img src="https://badgen.net/bundlephobia/minzip/@axios-use/vue" alt="minzipped size"></a>
 <a href="https://github.com/axios-use/axios-use-vue/blob/main/LICENSE" target="__blank"><img src="https://img.shields.io/github/license/axios-use/axios-use-vue" alt="license"></a>
 </p>
