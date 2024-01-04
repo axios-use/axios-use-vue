@@ -1,3 +1,12 @@
+## [0.2.3](https://github.com/axios-use/axios-use-vue/compare/v0.2.2...v0.2.3) (2024-01-04)
+
+
+### Bug Fixes
+
+* **types:** type directory error  ([eaeba42](https://github.com/axios-use/axios-use-vue/commit/eaeba42be2fe99da566e4f8c987e774ddf7d5539))
+
+
+
 ## [0.2.2](https://github.com/axios-use/axios-use-vue/compare/v0.2.1...v0.2.2) (2023-11-21)
 
 
