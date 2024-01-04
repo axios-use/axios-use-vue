@@ -5,7 +5,7 @@
   "type": "module",
   "main": "lib/index.cjs",
   "module": "esm/index.js",
-  "types": "lib/index.d.ts",
+  "types": "esm/index.d.ts",
   "unpkg": "dist/axios-use-vue.umd.js",
   "scripts": {
     "build": "rimraf lib esm dist; npm run build:js; npm run build:type",
