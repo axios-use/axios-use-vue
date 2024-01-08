@@ -1,3 +1,12 @@
+## [0.2.4](https://github.com/axios-use/axios-use-vue/compare/v0.2.3...v0.2.4) (2024-01-08)
+
+
+### Bug Fixes
+
+* **useRequest:** cancel-sources comparison failed (vue reactivity in depth) ([6e60503](https://github.com/axios-use/axios-use-vue/commit/6e605036235ee0b7f1eedd4c60e4018e46e483da))
+
+
+
 ## [0.2.3](https://github.com/axios-use/axios-use-vue/compare/v0.2.2...v0.2.3) (2024-01-04)
 
 
