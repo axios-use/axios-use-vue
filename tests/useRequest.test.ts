@@ -140,7 +140,10 @@ describe("useRequest", () => {
     expect(okFn).toBeCalledTimes(0);
     expect(errFn).toBeCalledTimes(0);
 
-    ready()
+    expect(hasPending.value).toBeFalsy();
+    const promise = ready();
+    expect(hasPending.value).toBeTruthy();
+    promise
       .then(() => {
         // don't call
         expect(1).toBe(2);
