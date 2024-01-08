@@ -21,12 +21,13 @@ describe("useRequest", () => {
   });
 
   test("check response", async () => {
-    const [createRequest] = useRequest(getAPIFuncs(true).user.list);
+    const [createRequest, reqState] = useRequest(getAPIFuncs(true).user.list);
 
     const [data, response] = await createRequest().ready();
     expect(data).toStrictEqual(MOCK_DATA_USER_LIST);
     expect(response.data).toStrictEqual(MOCK_DATA_USER_LIST);
     expect(response.status).toBe(200);
+    expect(reqState.hasPending.value).toBeFalsy();
   });
 
   test("any type (without `request`)", async () => {
@@ -147,10 +148,12 @@ describe("useRequest", () => {
       .catch((err) => {
         expect(err.isCancel).toBeTruthy();
         expect(err.message).toBe("mock_cancel");
+        expect(hasPending.value).toBeFalsy();
       })
       .finally(() => {
         expect(okFn).toBeCalledTimes(0);
         expect(errFn).toBeCalledTimes(1);
+        expect(hasPending.value).toBeFalsy();
       });
     cancel("mock_cancel");
     expect(okFn).toBeCalledTimes(0);
