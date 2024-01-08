@@ -1,5 +1,5 @@
 import type { ComputedRef } from "vue";
-import { computed, ref, unref, onUnmounted } from "vue";
+import { computed, shallowRef, unref, onUnmounted } from "vue";
 import type {
   AxiosError,
   AxiosInstance,
@@ -43,7 +43,7 @@ export function useRequest<T extends Request>(
   const requestConfig = getUseRequestConfig();
   const _axiosIns = options?.instance || requestConfig.instance;
 
-  const sources = ref<CancelTokenSource[]>([]);
+  const sources = shallowRef<CancelTokenSource[]>([]);
   const hasPending = computed(() => unref(sources).length > 0);
   const { onCompleted, onError } = options || {};
 
@@ -72,7 +72,7 @@ export function useRequest<T extends Request>(
     const _source = axios.CancelToken.source();
 
     const ready = () => {
-      sources.value = [...unref(sources), _source];
+      sources.value.push(_source);
 
       return _axiosIns({ ..._config, cancelToken: _source.token })
         .then((res) => {
