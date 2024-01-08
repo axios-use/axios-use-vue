@@ -72,7 +72,7 @@ export function useRequest<T extends Request>(
     const _source = axios.CancelToken.source();
 
     const ready = () => {
-      sources.value.push(_source);
+      sources.value = [...unref(sources), _source];
 
       return _axiosIns({ ..._config, cancelToken: _source.token })
         .then((res) => {
