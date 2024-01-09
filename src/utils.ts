@@ -29,8 +29,12 @@ export function useReducer<R extends Reducer<any, any>>(
   return [readonly(state) as Readonly<Ref<ReducerState<R>>>, dispatch];
 }
 
+// compatibility (vue < 3.3)
+type MaybeRef<T = any> = T | Ref<T>;
 export type UnRef<T> = T extends Ref<infer U> ? U : T;
-export type FullRefArrayItem<T extends any[]> = { [K in keyof T]: Ref<T[K]> };
+export type FullRefArrayItem<T extends any[]> = {
+  [K in keyof T]: MaybeRef<T[K]>;
+};
 export type UnRefArrayItem<T extends any[]> = { [K in keyof T]: UnRef<T[K]> };
 
 /**
