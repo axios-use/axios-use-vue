@@ -78,7 +78,7 @@ function getNextState<T extends Request>(
     data: action.type === "success" ? action.data : state.data,
     response,
     error: action.type === "error" ? action.error : undefined,
-    isLoading: action.type === "start" ? true : false,
+    isLoading: action.type === "start",
   };
 }
 
