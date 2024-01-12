@@ -1,3 +1,17 @@
+## [0.2.5](https://github.com/axios-use/axios-use-vue/compare/v0.2.4...v0.2.5) (2024-01-12)
+
+
+### Bug Fixes
+
+* **useRequest:** revert hasPending recomputed (sources) ([d349846](https://github.com/axios-use/axios-use-vue/commit/d349846b2f4809582fd99b5337d870edbc0de679))
+
+
+### Features
+
+* **types:** `FullRefArrayItem` compatible with MaybeRef ([8082b72](https://github.com/axios-use/axios-use-vue/commit/8082b723e48e94ad4003bc9be1fde45151963de5))
+
+
+
 ## [0.2.4](https://github.com/axios-use/axios-use-vue/compare/v0.2.3...v0.2.4) (2024-01-08)
 
 
