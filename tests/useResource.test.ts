@@ -1,8 +1,9 @@
 import { describe, expect, test, expectTypeOf } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
-import type { AxiosResponse } from "axios";
+import type { AxiosError, AxiosResponse } from "axios";
 import { computed, defineComponent, h, ref, unref, reactive } from "vue";
 
+import type { RequestError } from "../src";
 import { useResource, _request } from "../src";
 import type { MockDataUserItem } from "./setup/mock-request";
 import {
@@ -347,5 +348,93 @@ describe("useResource", () => {
     });
 
     mount(Component);
+  });
+
+  test("async request function", async () => {
+    const Component = defineComponent({
+      setup() {
+        const params = reactive({ id: "1" });
+        const [res, req] = useResource(getAPIFuncs(true).user.get, [params], {
+          filter: (p) => Boolean(p?.id),
+          asyncReq: true,
+        });
+
+        expect(unref(res).isLoading).toBeTruthy();
+        expect(unref(res).data).toBeUndefined();
+        expect(unref(res).response).toBeUndefined();
+        expect(unref(res).error).toBeUndefined();
+
+        const handleChangeId = () => {
+          req({ id: "2" }).then(([d, r]) => {
+            expectTypeOf(d).toEqualTypeOf<MockDataUserItem | undefined>();
+            expectTypeOf(r).toEqualTypeOf<AxiosResponse<MockDataUserItem>>();
+
+            const _cur = MOCK_DATA_USER_LIST.find((i) => i.id === "2");
+            expect(d).toStrictEqual(_cur);
+            expect(r.data).toStrictEqual(_cur);
+          });
+        };
+        const handleReqErr = () => {
+          req({ id: "100" })
+            .then(() => {
+              expect(1).toBe(2);
+            })
+            .catch((e) => {
+              const _e = e as RequestError<any, any, AxiosError>;
+              expect(_e.original.response?.status).toBe(404);
+            });
+        };
+
+        return () =>
+          h("div", [
+            h("button", {
+              "data-t-id": "change_id",
+              onClick: handleChangeId,
+            }),
+            h("button", {
+              "data-t-id": "req_err",
+              onClick: handleReqErr,
+            }),
+            h(
+              "div",
+              { "data-t-id": "res.data" },
+              JSON.stringify(res.value.data),
+            ),
+            h(
+              "div",
+              { "data-t-id": "res.err" },
+              JSON.stringify(res.value.error),
+            ),
+            h("div", { "data-t-id": "res.isLoading" }, res.value.isLoading),
+            h("div", { "data-t-id": "params.id" }, params.id),
+          ]);
+      },
+    });
+
+    const wrapper = mount(Component);
+    await flushPromises();
+    expect(wrapper.get('[data-t-id="res.data"]').text()).toBe(
+      JSON.stringify(MOCK_DATA_USER_LIST.find((i) => i.id === "1")),
+    );
+    expect(wrapper.get('[data-t-id="res.err"]').text()).toBe("");
+    expect(wrapper.get('[data-t-id="res.isLoading"]').text()).toBe("false");
+    expect(wrapper.get('[data-t-id="params.id"]').text()).toBe("1");
+
+    wrapper.get('[data-t-id="change_id"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.get('[data-t-id="res.data"]').text()).toBe(
+      JSON.stringify(MOCK_DATA_USER_LIST.find((i) => i.id === "2")),
+    );
+    expect(wrapper.get('[data-t-id="res.err"]').text()).toBe("");
+    expect(wrapper.get('[data-t-id="res.isLoading"]').text()).toBe("false");
+    expect(wrapper.get('[data-t-id="params.id"]').text()).toBe("1");
+
+    wrapper.get('[data-t-id="req_err"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.get('[data-t-id="res.isLoading"]').text()).toBe("false");
+    expect(wrapper.get('[data-t-id="res.data"]').text()).toBe(
+      JSON.stringify(MOCK_DATA_USER_LIST.find((i) => i.id === "2")),
+    );
+    expect(wrapper.get('[data-t-id="res.err"]').text()).not.toBe("");
   });
 });
