@@ -8,6 +8,7 @@ import type {
   BodyData,
   RequestError,
   Request,
+  RequestAsyncFunc,
   RequestDispatcher,
   RequestCallbackFn,
 } from "./request";
@@ -29,25 +30,27 @@ export type UseResourceResultState<T extends Request> = ComputedRef<
   RequestState<T>
 >;
 
-export type UseResourceResult<T extends Request> = [
+export type UseResourceResult<T extends Request, A extends boolean = false> = [
   /** Response data group */
   UseResourceResultState<T>,
   /** A function that enables you to re-execute the request. And pass in new variables */
-  RequestDispatcher<T>,
+  A extends true ? RequestAsyncFunc<T> : RequestDispatcher<T>,
   /** A function that enables you to re-execute the request. Keep the latest variables */
   () => Canceler | undefined,
   /** A function that cancel the request */
   Canceler,
 ];
 
-export type UseResourceOptions<T extends Request> = Pick<
-  RequestConfigType,
-  "instance" | "getResponseItem"
-> &
+export type UseResourceOptions<
+  T extends Request,
+  A extends boolean = false,
+> = Pick<RequestConfigType, "instance" | "getResponseItem"> &
   RequestCallbackFn<T> & {
     /** Conditional Fetching */
     filter?: (...args: Parameters<T>) => boolean;
     defaultState?: RequestState<T>;
+    /** Control the return value of the request */
+    asyncReq?: A;
   };
 
 function getDefaultStateLoading<T extends Request>(
@@ -87,11 +90,11 @@ export type RequestDepsParameters<T extends Request> =
   | FullRefArrayItem<Parameters<T>>
   | ComputedRef<Parameters<T>>;
 
-export function useResource<T extends Request>(
+export function useResource<T extends Request, A extends boolean = false>(
   fn: T,
   requestParams?: RequestDepsParameters<T> | false,
-  options?: UseResourceOptions<T>,
-): UseResourceResult<T> {
+  options?: UseResourceOptions<T, A>,
+): UseResourceResult<T, A> {
   const [createRequest, { clear }] = useRequest(fn, {
     onCompleted: options?.onCompleted,
     onError: options?.onError,
@@ -107,7 +110,7 @@ export function useResource<T extends Request>(
     ...options?.defaultState,
   });
 
-  const request = (...args: Parameters<T>) => {
+  const _reqDispatcher = (...args: Parameters<T>) => {
     clear(REQUEST_CLEAR_MESSAGE);
 
     const { ready, cancel } = createRequest(...args);
@@ -126,6 +129,26 @@ export function useResource<T extends Request>(
 
     return cancel;
   };
+  const _reqAsync = async (...args: Parameters<T>) => {
+    clear(REQUEST_CLEAR_MESSAGE);
+
+    const { ready } = createRequest(...args);
+
+    try {
+      dispatch({ type: "start" });
+      const [data, response] = await ready();
+      dispatch({ type: "success", data, response });
+      return [data, response];
+    } catch (e) {
+      const error = e as RequestError<Payload<T>, BodyData<T>>;
+      if (!error.isCancel) {
+        dispatch({ type: "error", error });
+      }
+      throw e;
+    }
+  };
+  const request = (...args: Parameters<T>) =>
+    options?.asyncReq ? _reqAsync(...args) : _reqDispatcher(...args);
 
   const refresh = () => {
     const _args = unrefs(requestParams || []) as Parameters<T>;
@@ -133,7 +156,7 @@ export function useResource<T extends Request>(
       typeof options?.filter === "function" ? options.filter(..._args) : true;
 
     if (_filter) {
-      return request(..._args);
+      return _reqDispatcher(..._args);
     }
 
     return undefined;
@@ -160,7 +183,7 @@ export function useResource<T extends Request>(
     },
   );
 
-  const _rtnState = computed<RequestState<T>>(() => unref(state));
+  const rtnState = computed<RequestState<T>>(() => unref(state));
 
-  return [_rtnState, request, refresh, cancel];
+  return [rtnState, request, refresh, cancel] as UseResourceResult<T, A>;
 }
