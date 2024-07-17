@@ -37,7 +37,7 @@ export const setUseRequestConfig = (app: App, options?: RequestConfigType) => {
       },
     });
   } else {
-    app.provide(AXIOS_USE_VUE_PROVIDE_KEY, options);
+    app.provide(AXIOS_USE_VUE_PROVIDE_KEY, options || {});
   }
 };
 
