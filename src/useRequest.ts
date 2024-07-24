@@ -83,14 +83,14 @@ export function useRequest<T extends Request>(
               ? options.getResponseItem(res as Payload<T>)
               : requestConfig.getResponseItem(res)
           ) as Payload<T, true>;
-          onCompleted?.(_data, res as Payload<T>);
+          onCompleted?.(_data, res as Payload<T>, args);
           return [_data, res as Payload<T>] as const;
         })
         .catch((err: AxiosError<Payload<T>, BodyData<T>>) => {
           removeCancelToken(_source.token);
 
           const _error = createRequestError(err);
-          onError?.(_error);
+          onError?.(_error, args);
 
           throw _error;
         });
