@@ -21,14 +21,17 @@ describe("useResource", () => {
       setup() {
         const id = ref("1");
         const params = computed(() => ({ id: unref(id) }));
-        const [res] = useResource(getAPIFuncs(true).user.get, [params], {
-          onCompleted: (d, r) => {
+        const reqFn = getAPIFuncs(true).user.get;
+        const [res] = useResource(reqFn, [params], {
+          onCompleted: (d, r, a) => {
             expectTypeOf(d).toEqualTypeOf<MockDataUserItem | undefined>();
             expectTypeOf(r).toEqualTypeOf<AxiosResponse<MockDataUserItem>>();
+            expectTypeOf(a).toEqualTypeOf<Parameters<typeof reqFn>>();
 
             const _item = MOCK_DATA_USER_LIST.find((i) => i.id === unref(id));
             expect(d).toStrictEqual(_item);
             expect(r.data).toStrictEqual(_item);
+            expect(a).toStrictEqual([{ id: unref(id) }]);
           },
         });
 
@@ -86,9 +89,10 @@ describe("useResource", () => {
     defineComponent({
       setup() {
         const [res] = useResource(getAPIFuncs(true).user.anyTypeList, false, {
-          onCompleted: (d, r) => {
+          onCompleted: (d, r, a) => {
             expectTypeOf(d).toEqualTypeOf<any>();
             expectTypeOf(r).toEqualTypeOf<any>();
+            expectTypeOf(a).toEqualTypeOf<[]>();
           },
         });
 
@@ -107,9 +111,10 @@ describe("useResource", () => {
           getAPIFuncs(true).user.anyTypeWithoutGenericityList,
           false,
           {
-            onCompleted: (d, r) => {
+            onCompleted: (d, r, a) => {
               expectTypeOf(d).toEqualTypeOf<any>();
               expectTypeOf(r).toEqualTypeOf<AxiosResponse<any>>();
+              expectTypeOf(a).toEqualTypeOf<[]>();
             },
           },
         );

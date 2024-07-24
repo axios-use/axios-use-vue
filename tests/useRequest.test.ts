@@ -32,11 +32,13 @@ describe("useRequest", () => {
 
   test("any type (without `request`)", async () => {
     const [createRequest] = useRequest(getAPIFuncs(true).user.anyTypeList, {
-      onCompleted(data, response) {
+      onCompleted(data, response, args) {
         expectTypeOf(data).toEqualTypeOf<any>();
         expectTypeOf(response).toEqualTypeOf<any>();
+        expectTypeOf(args).toEqualTypeOf<[]>();
         expect(data).toStrictEqual(MOCK_DATA_USER_LIST);
         expect(response.data).toStrictEqual(MOCK_DATA_USER_LIST);
+        expect(args).toStrictEqual([]);
       },
     });
 
@@ -52,11 +54,13 @@ describe("useRequest", () => {
     const [createRequest] = useRequest(
       getAPIFuncs(true).user.anyTypeWithoutGenericityList,
       {
-        onCompleted(data, response) {
+        onCompleted(data, response, args) {
           expectTypeOf(data).toEqualTypeOf<any>();
           expectTypeOf(response).toEqualTypeOf<AxiosResponse<any>>();
+          expectTypeOf(args).toEqualTypeOf<[]>();
           expect(data).toStrictEqual(MOCK_DATA_USER_LIST);
           expect(response.data).toStrictEqual(MOCK_DATA_USER_LIST);
+          expect(args).toStrictEqual([]);
         },
       },
     );
@@ -217,11 +221,13 @@ describe("useRequest", () => {
         }),
       {
         instance: _instance,
-        onCompleted: (d, r) => {
+        onCompleted: (d, r, args) => {
           expect(d).toBeUndefined();
           expectTypeOf(d).toMatchTypeOf<undefined>();
           expect(r).toStrictEqual(mockItem);
           expectTypeOf(r).toMatchTypeOf<MockDataUserItem | undefined>();
+          expectTypeOf(args).toMatchTypeOf<[string]>();
+          expect(args).toStrictEqual([TARGET_ID]);
         },
       },
     );
@@ -264,7 +270,7 @@ describe("useRequest", () => {
       {
         instance: _instance,
         getResponseItem: _getResponseItem,
-        onCompleted: (d, r) => {
+        onCompleted: (d, r, args) => {
           expect(d).toStrictEqual(mockItem);
           expectTypeOf(d).toMatchTypeOf<MockDataUserItem | undefined>();
           expect(r).toStrictEqual({
@@ -273,6 +279,8 @@ describe("useRequest", () => {
             message: "OK",
           });
           expectTypeOf(r).toMatchTypeOf<_MyRes<MockDataUserItem> | undefined>();
+          expectTypeOf(args).toMatchTypeOf<[string]>();
+          expect(args).toStrictEqual([TARGET_ID]);
         },
       },
     );
@@ -313,7 +321,7 @@ describe("useRequest", () => {
           {
             instance: _instance,
             getResponseItem: _getResponseItem,
-            onCompleted: (d, r) => {
+            onCompleted: (d, r, args) => {
               // custom `data` value
               expect(d).toStrictEqual(mockItem?.name);
               expectTypeOf(d).toMatchTypeOf<string | undefined>();
@@ -321,6 +329,8 @@ describe("useRequest", () => {
               expectTypeOf(r).toMatchTypeOf<
                 AxiosResponse<MockDataUserItem> | undefined
               >();
+              expectTypeOf(args).toMatchTypeOf<[string]>();
+              expect(args).toStrictEqual([TARGET_ID]);
             },
           },
         );
