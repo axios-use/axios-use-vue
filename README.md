@@ -135,8 +135,8 @@ const [createRequest, { hasPending, cancel }] = useRequest(
     method: "DELETE",
   }),
   {
-    onCompleted: (data, response) => console.info(data, response),
-    onError: (err) => console.info(err),
+    onCompleted: (data, response, paramsArgs) => console.info(data, response, paramsArgs),
+    onError: (err, paramsArgs) => console.info(err, paramsArgs),
   },
 );
 ```
@@ -255,8 +255,8 @@ const [reqState] = useResource(
   }),
   [],
   {
-    onCompleted: (data, response) => console.info(data, response),
-    onError: (err) => console.info(err),
+    onCompleted: (data, response, paramsArgs) => console.info(data, response, paramsArgs),
+    onError: (err, paramsArgs) => console.info(err, paramsArgs),
   },
 );
 ```
