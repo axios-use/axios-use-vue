@@ -153,6 +153,7 @@ const [createRequest, { hasPending, cancel }] = useRequest(
 | options.onError         | function        | This function is passed an `RequestError` object                    |
 | options.instance        | `AxiosInstance` | Customize the Axios instance of the current item                    |
 | options.getResponseItem | function        | custom returns the value of `data`(index 0).                        |
+| options.asyncReq        | boolean         | Control the return value of the request                             |
 
 ```ts
 // js
@@ -184,6 +185,8 @@ type ReqState = ComputedRef<{
 
 // `options.filter` will not be called
 type Fetch = (...args: Parameters<T>) => Canceler;
+// if `options.asyncReq` is `true`
+type Fetch = (...args: Parameters<T>) => Promise<[Payload<T>, AxiosResponse]>;
 
 // 1. Same as `fetch`. But no parameters required. Inherit `useResource` parameters
 // 2. Will call `options.filter`
