@@ -77,7 +77,11 @@ describe("useResource", () => {
     );
     expect(wrapper.get('[data-t-id="res.isLoading"]').text()).toBe("false");
 
-    wrapper.get('[data-t-id="add"]').trigger("click");
+    await wrapper.get('[data-t-id="add"]').trigger("click");
+    expect(wrapper.get('[data-t-id="res.data"]').text()).toBe(
+      JSON.stringify(MOCK_DATA_USER_LIST.find((i) => i.id === "1")),
+    );
+    expect(wrapper.get('[data-t-id="res.isLoading"]').text()).toBe("true");
 
     await flushPromises();
     expect(wrapper.get('[data-t-id="res.data"]').text()).toBe(
@@ -251,6 +255,131 @@ describe("useResource", () => {
     await flushPromises();
     expect(wrapper.get('[data-t-id="res.data"]').text()).toBe(
       JSON.stringify(MOCK_DATA_USER_LIST.find((i) => i.id === "1")),
+    );
+    expect(wrapper.get('[data-t-id="res.isLoading"]').text()).toBe("false");
+  });
+
+  test("options: resetOnReq-true", async () => {
+    const Component = defineComponent({
+      setup() {
+        const id = ref("1");
+        const params = computed(() => ({ id: unref(id) }));
+        const reqFn = getAPIFuncs(true).user.get;
+        const [res] = useResource(reqFn, [params], {
+          onCompleted: (d, r, a) => {
+            expectTypeOf(d).toEqualTypeOf<MockDataUserItem | undefined>();
+            expectTypeOf(r).toEqualTypeOf<AxiosResponse<MockDataUserItem>>();
+            expectTypeOf(a).toEqualTypeOf<Parameters<typeof reqFn>>();
+
+            const _item = MOCK_DATA_USER_LIST.find((i) => i.id === unref(id));
+            expect(d).toStrictEqual(_item);
+            expect(r.data).toStrictEqual(_item);
+            expect(a).toStrictEqual([{ id: unref(id) }]);
+          },
+          resetOnReq: true,
+        });
+
+        const onAdd = () => {
+          id.value = String(Number(unref(id)) + 1);
+        };
+
+        return () =>
+          h("div", [
+            h("button", { "data-t-id": "add", onClick: onAdd }, "add"),
+            h(
+              "div",
+              { "data-t-id": "res.data" },
+              JSON.stringify(res.value.data),
+            ),
+            h("div", { "data-t-id": "res.isLoading" }, res.value.isLoading),
+          ]);
+      },
+    });
+
+    const wrapper = mount(Component);
+
+    expect(wrapper.get('[data-t-id="res.data"]').text()).toBe("");
+    expect(wrapper.get('[data-t-id="res.isLoading"]').text()).toBeTruthy();
+
+    await flushPromises();
+    expect(wrapper.get('[data-t-id="res.data"]').text()).toBe(
+      JSON.stringify(MOCK_DATA_USER_LIST.find((i) => i.id === "1")),
+    );
+    expect(wrapper.get('[data-t-id="res.isLoading"]').text()).toBe("false");
+
+    await wrapper.get('[data-t-id="add"]').trigger("click");
+
+    expect(wrapper.get('[data-t-id="res.data"]').text()).toBe("");
+    expect(wrapper.get('[data-t-id="res.isLoading"]').text()).toBe("true");
+
+    await flushPromises();
+    expect(wrapper.get('[data-t-id="res.data"]').text()).toBe(
+      JSON.stringify(MOCK_DATA_USER_LIST.find((i) => i.id === "2")),
+    );
+    expect(wrapper.get('[data-t-id="res.isLoading"]').text()).toBe("false");
+  });
+  test("options: resetOnReq-true (with defaultState)", async () => {
+    const INIT_VALUE: MockDataUserItem = { id: "xxx", name: "xxx" };
+    const Component = defineComponent({
+      setup() {
+        const id = ref("1");
+        const params = computed(() => ({ id: unref(id) }));
+        const reqFn = getAPIFuncs(true).user.get;
+        const [res] = useResource(reqFn, [params], {
+          onCompleted: (d, r, a) => {
+            expectTypeOf(d).toEqualTypeOf<MockDataUserItem | undefined>();
+            expectTypeOf(r).toEqualTypeOf<AxiosResponse<MockDataUserItem>>();
+            expectTypeOf(a).toEqualTypeOf<Parameters<typeof reqFn>>();
+
+            const _item = MOCK_DATA_USER_LIST.find((i) => i.id === unref(id));
+            expect(d).toStrictEqual(_item);
+            expect(r.data).toStrictEqual(_item);
+            expect(a).toStrictEqual([{ id: unref(id) }]);
+          },
+          resetOnReq: true,
+          defaultState: { data: INIT_VALUE },
+        });
+
+        const onAdd = () => {
+          id.value = String(Number(unref(id)) + 1);
+        };
+
+        return () =>
+          h("div", [
+            h("button", { "data-t-id": "add", onClick: onAdd }, "add"),
+            h(
+              "div",
+              { "data-t-id": "res.data" },
+              JSON.stringify(res.value.data),
+            ),
+            h("div", { "data-t-id": "res.isLoading" }, res.value.isLoading),
+          ]);
+      },
+    });
+
+    const wrapper = mount(Component);
+
+    expect(wrapper.get('[data-t-id="res.data"]').text()).toBe(
+      JSON.stringify(INIT_VALUE),
+    );
+    expect(wrapper.get('[data-t-id="res.isLoading"]').text()).toBeTruthy();
+
+    await flushPromises();
+    expect(wrapper.get('[data-t-id="res.data"]').text()).toBe(
+      JSON.stringify(MOCK_DATA_USER_LIST.find((i) => i.id === "1")),
+    );
+    expect(wrapper.get('[data-t-id="res.isLoading"]').text()).toBe("false");
+
+    await wrapper.get('[data-t-id="add"]').trigger("click");
+
+    expect(wrapper.get('[data-t-id="res.data"]').text()).toBe(
+      JSON.stringify(INIT_VALUE),
+    );
+    expect(wrapper.get('[data-t-id="res.isLoading"]').text()).toBe("true");
+
+    await flushPromises();
+    expect(wrapper.get('[data-t-id="res.data"]').text()).toBe(
+      JSON.stringify(MOCK_DATA_USER_LIST.find((i) => i.id === "2")),
     );
     expect(wrapper.get('[data-t-id="res.isLoading"]').text()).toBe("false");
   });
