@@ -138,7 +138,7 @@ export function useResource<T extends Request, A extends boolean = false>(
       dispatch({ type: "start" });
       const [data, response] = await ready();
       dispatch({ type: "success", data, response });
-      return [data, response];
+      return [data, response] as const;
     } catch (e) {
       const error = e as RequestError<Payload<T>, BodyData<T>>;
       if (!error.isCancel) {
