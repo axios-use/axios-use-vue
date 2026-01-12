@@ -67,6 +67,21 @@ describe("context", () => {
     });
   });
 
+  test("setUseRequestConfig empty options", () => {
+    const Component = defineComponent({
+      setup() {
+        const { instance } = getUseRequestConfig();
+        expect(instance).toBe(axios);
+
+        return () => h("div");
+      },
+    });
+
+    mount(Component, (app) => {
+      setUseRequestConfig(app);
+    });
+  });
+
   test("setUseRequestConfig (vue 2)", () => {
     const Component = defineComponent2({
       setup() {

@@ -51,6 +51,10 @@ export type RequestDispatcher<T extends Request> = (
   ...args: Parameters<T>
 ) => Canceler;
 
+export type RequestAsyncFunc<T extends Request> = (
+  ...args: Parameters<T>
+) => Promise<readonly [Payload<T, true>, Payload<T>]>;
+
 /**
  * Normalize the error response returned from `@axios-use/vue`
  */
