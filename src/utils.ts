@@ -1,7 +1,7 @@
 import type { ComputedRef, Ref } from "vue";
 import { isReactive, readonly, ref, unref } from "vue";
 
-type Reducer<S, A> = (prevState: S, action: A, initSate?: Partial<S>) => S;
+type Reducer<S, A> = (prevState: S, action: A, initState?: S) => S;
 type ReducerState<R extends Reducer<any, any>> = R extends Reducer<infer S, any>
   ? S
   : never;
