@@ -51,6 +51,8 @@ export type UseResourceOptions<
     defaultState?: RequestState<T>;
     /** Control the return value of the request */
     asyncReq?: A;
+    /** Sets the state to initialState before executing the promise. */
+    resetOnReq?: boolean;
   };
 
 function getDefaultStateLoading<T extends Request>(
@@ -69,17 +71,27 @@ function getDefaultStateLoading<T extends Request>(
 type Action<T extends Request> =
   | { type: "success"; data: Payload<T, true>; response: Payload<T> }
   | { type: "error"; error: RequestError<Payload<T>, BodyData<T>> }
-  | { type: "reset" | "start" };
+  | { type: "reset" | "start"; reset?: boolean };
 
 function getNextState<T extends Request>(
   state: RequestState<T>,
   action: Action<T>,
+  init?: RequestState<T>,
 ): RequestState<T> {
-  const response = action.type === "success" ? action.response : state.response;
+  let _data = state.data;
+  let _response = state.response;
+  if (action.type === "success") {
+    _data = action.data;
+    _response = action.response;
+  }
+  if ((action.type === "start" || action.type === "reset") && action.reset) {
+    _data = init?.data;
+    _response = init?.response;
+  }
 
   return {
-    data: action.type === "success" ? action.data : state.data,
-    response,
+    data: _data,
+    response: _response,
     error: action.type === "error" ? action.error : undefined,
     isLoading: action.type === "start",
   };
@@ -115,7 +127,7 @@ export function useResource<T extends Request, A extends boolean = false>(
 
     const { ready, cancel } = createRequest(...args);
 
-    dispatch({ type: "start" });
+    dispatch({ type: "start", reset: options?.resetOnReq });
     ready()
       .then(([data, response]) => {
         dispatch({ type: "success", data, response });
@@ -135,7 +147,7 @@ export function useResource<T extends Request, A extends boolean = false>(
     const { ready } = createRequest(...args);
 
     try {
-      dispatch({ type: "start" });
+      dispatch({ type: "start", reset: options?.resetOnReq });
       const [data, response] = await ready();
       dispatch({ type: "success", data, response });
       return [data, response] as const;

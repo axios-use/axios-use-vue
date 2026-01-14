@@ -1,7 +1,7 @@
 import type { ComputedRef, Ref } from "vue";
 import { isReactive, readonly, ref, unref } from "vue";
 
-type Reducer<S, A> = (prevState: S, action: A) => S;
+type Reducer<S, A> = (prevState: S, action: A, initState?: S) => S;
 type ReducerState<R extends Reducer<any, any>> = R extends Reducer<infer S, any>
   ? S
   : never;
@@ -23,7 +23,7 @@ export function useReducer<R extends Reducer<any, any>>(
 ): [Readonly<Ref<ReducerState<R>>>, (action: ReducerAction<R>) => void] {
   const state = ref(initialArg);
   const dispatch = (action: ReducerAction<R>) => {
-    state.value = reducer(state.value, action);
+    state.value = reducer(state.value, action, initialArg);
   };
 
   return [readonly(state) as Readonly<Ref<ReducerState<R>>>, dispatch];

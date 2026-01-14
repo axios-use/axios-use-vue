@@ -1,4 +1,5 @@
-import { describe, test, expect } from "vitest";
+import { describe, test, expect, expectTypeOf } from "vitest";
+import type { Ref } from "vue";
 import { isRef, ref, reactive, unref } from "vue";
 
 import { unrefs, useReducer, hasReactive } from "../src/utils";
@@ -42,7 +43,8 @@ describe("useReducer", () => {
 
   test("return - dispatch", () => {
     const [state, dispatch] = useReducer(
-      (s: { num: number }, action: { type: "add" | "sub" }) => {
+      (s: { num: number }, action: { type: "add" | "sub" }, init: any) => {
+        expect(init.num).toBe(0);
         const _type = action?.type;
         if (_type === "add") {
           return { num: s.num + 1 };
@@ -62,6 +64,11 @@ describe("useReducer", () => {
     expect(state.value.num).toBe(3);
     dispatch({ type: "sub" });
     expect(state.value.num).toBe(2);
+
+    expectTypeOf(state).toEqualTypeOf<Readonly<Ref<{ num: number }>>>();
+    expectTypeOf(dispatch).toEqualTypeOf<
+      (action: { type: "add" | "sub" }) => void
+    >();
 
     try {
       dispatch(undefined as any);

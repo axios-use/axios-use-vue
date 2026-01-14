@@ -154,6 +154,7 @@ const [createRequest, { hasPending, cancel }] = useRequest(
 | options.instance        | `AxiosInstance` | Customize the Axios instance of the current item                    |
 | options.getResponseItem | function        | custom returns the value of `data`(index 0).                        |
 | options.asyncReq        | boolean         | Control the return value of the request                             |
+| options.resetOnReq      | boolean         | Sets the state to initialState before executing the promise         |
 
 ```ts
 // js
